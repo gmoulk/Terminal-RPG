@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <ctime>
+#include <rand.h>
 using namespace std;
 
 class Living{
@@ -9,6 +11,11 @@ class Living{
 		int healthPower;
 	public:
 		Living(string nameI,int healthPowerI, int levelI) : name(nameI), healthPower(healthPowerI), level(levelI) {}	
+	
+		string getName(){
+			return this->name;
+		}
+
 };
 
 class Hero : public Living{
@@ -20,12 +27,21 @@ class Hero : public Living{
 		int money;
 		int experience;
 		int experienceForLevelUp;
+		int currentHealth;
 		//Characteristics that affect battle phase
 	public:
 		Hero(string nameI, int healthPowerI,int magicPowerI, int strengthI, int dexterityI, int agilityI) : Living(nameI,healthPowerI,0) , 
 			magicPower(magicPowerI), strength(strengthI), dexterity(dexterityI), agility(agilityI), money(0), experience(0), experienceForLevelUp(30) {}
+		
+		int getcurrentHealth(){
+			return this->currentHealth;
+		}
+		
 		virtual void levelUp() = 0;
-
+		
+		int attack(){
+			return this->strength; //Needs also weapons items and potions
+		}
 };
 
 class Warrior : public Hero{
@@ -33,6 +49,7 @@ class Warrior : public Hero{
 		Warrior(string nameI) : Hero(nameI,100,80,4,1,3) {
 			cout << "[DEBUG] Warrior created!" << endl;
 		}
+		
 		void levelUp(){
 			cout << this->name << " has been leveled up!" << endl;
 			this->strength += 3;
@@ -85,6 +102,19 @@ class Monster : public Living{
 	public:
 		Monster(string nameI, int healthPowerI, int level, int attackMaxI, int attackMinI, int deffenceI ,double probOfDogdeI) :
 			Living(nameI, healthPowerI,level), attackMax(attackMaxI), attackMin(attackMinI), deffence(deffenceI), probOfDogde(probOfDogdeI){}  		
+		
+		int getHealth(){
+			return this->healthPower;
+		}
+		
+		void getAttacked(int attackPoints){
+			srand((unsigned int) time(NULL));
+			double dogde = (double)rand() / RAND_MAX;
+			if(dogde > probOfDogde)
+				return;
+			int finalAttack = attackPoints - deffence;
+			healthPower -= finalAttack;	
+		}
 };
 
 class Dragon : public Monster{
