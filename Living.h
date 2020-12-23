@@ -1,7 +1,8 @@
 #pragma once
 #include <iostream>
 #include <ctime>
-#include <rand.h>
+#include <stdlib.h>
+#include "Items_and_spells.h"
 using namespace std;
 
 class Living{
@@ -9,13 +10,23 @@ class Living{
 		string name;
 		int level;
 		int healthPower;
+		bool faint;
+		int currentHealth;
 	public:
-		Living(string nameI,int healthPowerI, int levelI) : name(nameI), healthPower(healthPowerI), level(levelI) {}	
+		Living(string nameI,int healthPowerI, int levelI) : name(nameI), healthPower(healthPowerI), level(levelI), faint(0) {}	
 	
 		string getName(){
 			return this->name;
 		}
-
+		virtual void print(){
+			cout << "Name: " << this->name << endl;
+			cout << "Level: " << this->level << endl;
+			cout << "State: ";
+			if(faint == 0)
+				cout << "Currently In Good shape!" << endl;
+			else
+				cout << "Faint,He Is Currently Not Available!" << endl;	
+		}
 };
 
 class Hero : public Living{
@@ -28,10 +39,19 @@ class Hero : public Living{
 		int experience;
 		int experienceForLevelUp;
 		int currentHealth;
+		Weapon* wpInUse;
+		Armor* armInUse;
+		Item* bag[20];
+		int numOfItems;
 		//Characteristics that affect battle phase
 	public:
 		Hero(string nameI, int healthPowerI,int magicPowerI, int strengthI, int dexterityI, int agilityI) : Living(nameI,healthPowerI,0) , 
-			magicPower(magicPowerI), strength(strengthI), dexterity(dexterityI), agility(agilityI), money(0), experience(0), experienceForLevelUp(30) {}
+			magicPower(magicPowerI), strength(strengthI), dexterity(dexterityI), agility(agilityI), money(0), experience(0), experienceForLevelUp(30), numOfItems(0), currentHealth(healthPowerI) {
+				this->wpInUse = NULL;
+				this->armInUse = NULL;
+				for(int i = 0; i < 20; i++)
+					bag[i] = NULL;
+			}
 		
 		int getcurrentHealth(){
 			return this->currentHealth;
@@ -40,7 +60,65 @@ class Hero : public Living{
 		virtual void levelUp() = 0;
 		
 		int attack(){
-			return this->strength; //Needs also weapons items and potions
+			int totalAttack = 0;
+			if(this->wpInUse != NULL)
+				totalAttack += this->wpInUse->weapon_damage();
+			totalAttack += this->strength;
+			return this->strength;
+		}
+		
+		void getAttacked(int attackPoints){
+			srand((unsigned int) time(NULL));
+			double dogde = (double)rand() / RAND_MAX;
+			if((0.02 * this->agility) > dogde)
+				return;
+			int attackFinal = attackPoints * this->armInUse->get_damage_percentage();
+			this->currentHealth -= attackFinal;
+			if(this->currentHealth <= 0){
+				cout << this->getName() << " faints!" << endl;
+				this->faint = 1;
+			}
+		}
+		
+		void equip(){
+			if(numOfItems == 0){
+				cout << "No items in the bag to use!" << endl;
+				return;
+			}
+			cout << "Select one of the following to equip:";
+			for(int i = 0; i < numOfItems; i++){
+				cout << i + 1 << ")" << endl;
+				bag[i]->print();
+			}
+			int option;
+			cin >> option;
+			bool legitOption = 0;
+			do{
+				if(option > 0 || option <= numOfItems + 1)
+					legitOption = 1;
+			}while(!legitOption);
+			
+			if(bag[option - 1]->itemClass() == 1){
+				Item* temp_it = wpInUse;
+				this->wpInUse = (Weapon*) bag[option - 1];
+				bag[option - 1] = temp_it;
+			}
+			else if(bag[option - 1]->itemClass() == 2){
+				Item* temp_it = armInUse;
+				this->armInUse = (Armor*) bag[option - 1];
+				bag[option - 1] = temp_it;
+			}
+			else{
+				cout << "Using potion!" << endl;
+			}
+		}
+		virtual void print(){
+			cout << "======== HERO STATS ============" << endl;
+			Living::print();
+			cout << "Current Health: " << this->currentHealth << endl;
+			cout << "Strength: " << this->strength << endl;
+			cout << "Dexterity: " << this->dexterity << endl;
+			cout << "Agility: " << this->agility << endl; 
 		}
 };
 
@@ -59,6 +137,11 @@ class Warrior : public Hero{
 			this->experience = this->experienceForLevelUp - this->experience;
 			this->experienceForLevelUp += 1.2 * this->level;
 		}
+		
+		void print(){
+			Hero::print();
+			cout << "Class: Warrior" << endl; 
+		}
 };
 
 class Sorcerer : public Hero{
@@ -75,6 +158,11 @@ class Sorcerer : public Hero{
 			this->experience = this->experienceForLevelUp - this->experience;
 			this->experienceForLevelUp += 1.2 * this->level;
 		}
+		
+		void print(){
+			Hero::print();
+			cout << "Class: Sorcerer" << endl; 
+		}
 };
 
 class Paladin : public Hero{
@@ -82,6 +170,7 @@ class Paladin : public Hero{
 		Paladin(string nameI) : Hero(nameI,90,95,3,3,1) {
 			cout << "[DEBUG] Paladin created!" << endl;
 		}
+		
 		void levelUp(){
 			cout << this->name << " has been leveled up!" << endl;
 			this->strength += 3;
@@ -90,6 +179,11 @@ class Paladin : public Hero{
 			this->level++;
 			this->experience = this->experienceForLevelUp - this->experience;
 			this->experienceForLevelUp += 1.2 * this->level;
+		}
+		
+		void print(){
+			Hero::print();
+			cout << "Class: Sorcerer" << endl; 
 		}
 };
 
@@ -110,10 +204,16 @@ class Monster : public Living{
 		void getAttacked(int attackPoints){
 			srand((unsigned int) time(NULL));
 			double dogde = (double)rand() / RAND_MAX;
-			if(dogde > probOfDogde)
+			if(dogde < probOfDogde)
 				return;
 			int finalAttack = attackPoints - deffence;
 			healthPower -= finalAttack;	
+		}
+		
+		virtual void print(){
+			cout << "======== MONSTER STATS ============" << endl;
+			Living::print();
+			cout << "Current Health: " << this->currentHealth << endl; 
 		}
 };
 
@@ -123,6 +223,11 @@ class Dragon : public Monster{
 			Monster(nameI, level, healthPowerI, attackMaxI + 1.9 * level, attackMinI + 1.9 * level, defenceI + 1.2 * level, probOfDogdeI + 0.05 * level) {
 				cout << "[DEBUG] dragon created" << endl;			
 			}
+			
+		void print(){
+			Monster::print();
+			cout << "Class: Dragon" << endl;
+		}	
 };
 
 class Exosceleton : public Monster{
@@ -131,6 +236,11 @@ class Exosceleton : public Monster{
 			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.9 * level, probOfDogdeI + 0.05 * level) {
 				cout << "[DEBUG] exosceleton created" << endl;
 			}
+			
+		void print(){
+			Monster::print();
+			cout << "Class: Exosceleton" << endl;
+		}	
 };
 
 class  Spirit : public Monster{
@@ -139,4 +249,8 @@ class  Spirit : public Monster{
 			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.2 * level, probOfDogdeI + 0.08 * level) {
 				cout << "[DEBUG] spirit created" << endl;
 			}
+	void print(){
+			Monster::print();
+			cout << "Class: Spirit" << endl;
+		}		
 };
