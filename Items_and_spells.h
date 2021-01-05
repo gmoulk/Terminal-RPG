@@ -185,3 +185,30 @@ public:
     LightingSpell(int level, int  mana, std::string name, double percentage)
     :Spell(level, mana, name), enemy_dodge_red_perc(percentage){}
 };
+
+
+class effect{
+
+private:
+    int& value_to_reduce;
+    int& initial_value;
+    int rounds_left;
+    double percentage_reduction;
+    
+public:
+    effect(int& to_reduce, int rounds=3, double percentage=0.33)
+    :value_to_reduce(to_reduce),initial_value(to_reduce), rounds_left(rounds), percentage_reduction(percentage){}
+
+    void apply_effect(){
+        value_to_reduce -= percentage_reduction*value_to_reduce;
+    }
+
+    bool update(){
+        if (rounds_left == 0){
+            value_to_reduce = initial_value;
+            return false;   // monster.effect = null
+        }
+        rounds_left--;
+        return true;
+    }
+};
