@@ -25,6 +25,7 @@ public:
         for (int i=0; i < number_of_heroes; i++)
             heroes[i]->print();
     }
+    friend class Battle;
 };
 
 
@@ -51,19 +52,87 @@ public:
         for (int i=0; i < number_of_monsters; i++)
             monsters[i]->print();
     }
-
+    friend class Battle;
 };
 
-class battle{
+
+class Battle{
 // battle takes place on a square on the grid(grid not made yet)
 private:
     heroe_squad* heroes;
     monsters_squad* monsters;
+    bool heroes_are_dead(){
+        for(int i = 0; i < heroes->get_heroes_num(); i++){
+            if (heroes->heroes[i]->getcurrentHealth() != 0){
+                return false;
+            }
+        }
+        return true;
+    }
+    bool monsters_are_dead(){
+        for(int i = 0; i < monsters->get_monsters_num(); i++){
+            if (monsters->monsters[i]->getHealth() != 0){
+                return false;
+            }
+        }
+        return true;
+    }
+    bool monsters_are_dead;
+
 public:
-    battle(heroe_squad* heroes,  monsters_squad* monsters)
+
+    Battle(heroe_squad* heroes,  monsters_squad* monsters)
     :heroes(heroes), monsters(monsters) {
         std::cout << "A battle is about to start!" << std::endl;
     }
-    // attacks will be implemented later
-    // 
+
+    // actual battle
+    bool battle(){  // the main function of the battle, everyhting happens in here
+        int round = 1;
+        //battle loop
+        for(round = 1; (!heroes_are_dead() && !monsters_are_dead()); round++){
+            //
+            std::cout << "ROUND: " << round << std::endl;
+            // player's round
+            // ARMOR AND WEAPON CHANGE
+            bool want_to_change = false;    
+            // armor change(does not count for an action)
+            std::cout << "do you want to change a hero's armor?" << std::endl;
+            std::cin >> want_to_change;
+            while(want_to_change){
+                int hero_index;
+                std::cout << "Pick a hero(" << 1 << "-" << heroes->get_heroes_num() << ")" << std::endl;
+                std::cin >> hero_index;
+                // number evalutaion will be implemented later
+                // armor change will be implemented later
+            
+            // weapon change(does not count for an action)
+            std::cout << "do you want to change a hero's weapon?" << std::endl;
+            std::cin >> want_to_change;
+             while(want_to_change){
+                int hero_index;
+                std::cout << "Pick a hero(" << 1 << "-" << heroes->get_heroes_num() << ")" << std::endl;
+                std::cin >> hero_index;
+                // number evalutaion will be implemented later
+                // weapon change will be implemented later
+            }
+            // ask user to pick a hero who has not attacked  and not used any potion to do something
+            // option 1: attack with weapon
+            // option 2: attack with spell
+            // option 3: drink a potion
+
+            // pc's round(AI KAPAA KEEPO)
+            for (int i = 0; i < monsters->get_monsters_num(); i++){
+
+                if (monsters->monsters[i]->getHealth() != 0){
+                    // every monster does something if its not dead
+                    // i will figure out later what
+                }
+            }
+        }
+        // end of battle
+        return monsters_are_dead(); 
+        }
+
+    }
 };
