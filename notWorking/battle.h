@@ -215,7 +215,7 @@ private:
 			// input
 			int option;
 			cin >> option;
-			heroes->change_weapon(hero_index, option);
+			heroes->change_weapon(hero_index-1, option);
 			cout << "Would you want to change something else?" << endl;
             cin >> want_to_change;
         }
