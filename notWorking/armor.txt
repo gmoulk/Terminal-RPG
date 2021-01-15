@@ -1,0 +1,54 @@
+Name:Endless Road 
+Level:0
+Price:25
+DamageReduction:0.1
+
+Name:Genji Shield 
+Level:0
+Price:30
+DamageReduction:0.15
+
+Name:Aegis Shield 
+Level:0
+Price:15
+DamageReduction:0.05
+
+Name:Phantom Shield 
+Level:1
+Price:30
+DamageReduction:0.2
+
+Name:Haste Shield 
+Level:1
+Price:28
+DamageReduction:0.15
+
+Name:Emblem 
+Level:1
+Price:40
+DamageReduction:0.25
+
+Name:Echo Shield 
+Level:2
+Price:34
+DamageReduction:0.25
+
+Name:Snow Shield 
+Level:2
+Price:40
+DamageReduction:0.30
+
+Name:Onyx Shield 
+Level:2
+Price:37
+DamageReduction:0.27
+
+Name:Phoenix Shield
+Level:3
+Price:60
+DamageReduction:0.40
+
+Name:Crystal Shield
+Level:3
+Price:75
+DamageReduction:0.45
