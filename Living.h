@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ctime>
 #include <stdlib.h>
+#include <list>
 #include "Items_and_spells.h"
 using namespace std;
 
@@ -13,7 +14,7 @@ class Living{
 		bool faint;
 		int currentHealth;
 	public:
-		Living(string nameI,int healthPowerI, int levelI) : name(nameI), healthPower(healthPowerI), level(levelI), faint(0) {}	
+		Living(string nameI,int healthPowerI, int levelI) : name(nameI), healthPower(healthPowerI), level(levelI), faint(0) , currentHealth(healthPower) {}	
 	
 		string getName(){
 			return this->name;
@@ -27,6 +28,10 @@ class Living{
 			else
 				cout << "Faint,He Is Currently Not Available!" << endl;	
 		}
+		
+		bool isFaint() const{
+			return this->faint;
+		}
 };
 
 class Hero : public Living{
@@ -35,22 +40,19 @@ class Hero : public Living{
 		int strength;
 		int dexterity;
 		int agility;
-		int money;
 		int experience;
 		int experienceForLevelUp;
 		int currentHealth;
-		Weapon* wpInUse;
+		Weapon* wpInUse1;
+		Weapon* wpInUse2;
 		Armor* armInUse;
-		Item* bag[20];
 		int numOfItems;
 		//Characteristics that affect battle phase
 	public:
 		Hero(string nameI, int healthPowerI,int magicPowerI, int strengthI, int dexterityI, int agilityI) : Living(nameI,healthPowerI,0) , 
-			magicPower(magicPowerI), strength(strengthI), dexterity(dexterityI), agility(agilityI), money(0), experience(0), experienceForLevelUp(30), numOfItems(0), currentHealth(healthPowerI) {
-				this->wpInUse = NULL;
-				this->armInUse = NULL;
-				for(int i = 0; i < 20; i++)
-					bag[i] = NULL;
+			magicPower(magicPowerI), strength(strengthI), dexterity(dexterityI), agility(agilityI), experience(0), experienceForLevelUp(30), numOfItems(0), currentHealth(healthPowerI), armInUse(NULL) {
+				wpInUse1 = NULL;
+				wpInUse2 = NULL;
 			}
 		
 		int getcurrentHealth(){
@@ -60,11 +62,20 @@ class Hero : public Living{
 		virtual void levelUp() = 0;
 		
 		int attack(){
-			int totalAttack = 0;
-			if(this->wpInUse != NULL)
-				totalAttack += this->wpInUse->weapon_damage();
+			int totalAttack = 0;			
+			if(this->wpInUse1 != NULL)
+				totalAttack += this->wpInUse1->weapon_damage();				
+			if(this->wpInUse2 != NULL)
+				totalAttack += this->wpInUse2->weapon_damage();
 			totalAttack += this->strength;
+			
 			return this->strength;
+		}
+		
+		int attack(Spell* spell_){
+			int totalAttack;
+			totalAttack = spell_->damage_to_do(this->dexterity);
+			return totalAttack;
 		}
 		
 		void getAttacked(int attackPoints){
@@ -72,46 +83,61 @@ class Hero : public Living{
 			double dogde = (double)rand() / RAND_MAX;
 			if((0.02 * this->agility) > dogde)
 				return;
-			int attackFinal = attackPoints * this->armInUse->get_damage_percentage();
+			int attackFinal = attackPoints;	
+			if(armInUse != NULL)	
+				attackFinal = attackPoints * this->armInUse->get_damage_percentage();
 			this->currentHealth -= attackFinal;
 			if(this->currentHealth <= 0){
 				cout << this->getName() << " faints!" << endl;
 				this->faint = 1;
 			}
+			cout << "Current health of " << this->name << " is " << this->currentHealth << endl;
 		}
 		
-		void equip(){
-			if(numOfItems == 0){
-				cout << "No items in the bag to use!" << endl;
-				return;
-			}
-			cout << "Select one of the following to equip:";
-			for(int i = 0; i < numOfItems; i++){
-				cout << i + 1 << ")" << endl;
-				bag[i]->print();
-			}
-			int option;
-			cin >> option;
-			bool legitOption = 0;
-			do{
-				if(option > 0 || option <= numOfItems + 1)
-					legitOption = 1;
-			}while(!legitOption);
-			
-			if(bag[option - 1]->itemClass() == 1){
-				Item* temp_it = wpInUse;
-				this->wpInUse = (Weapon*) bag[option - 1];
-				bag[option - 1] = temp_it;
-			}
-			else if(bag[option - 1]->itemClass() == 2){
-				Item* temp_it = armInUse;
-				this->armInUse = (Armor*) bag[option - 1];
-				bag[option - 1] = temp_it;
-			}
-			else{
-				cout << "Using potion!" << endl;
-			}
+		Item* equip(Armor* armToEquip){
+			Item* temp = this->armInUse;
+			this->armInUse = armToEquip;
+			return temp;
 		}
+		
+		Item** equip(Weapon* wepToEquip){
+			Weapon** arrayOfWep = new Weapon*[2];
+			if((this->wpInUse1 != NULL && wepToEquip->numOfHands() == 1 ) || (this->wpInUse1 == NULL && this->wpInUse2 == NULL)){
+					arrayOfWep[0] = wpInUse1;
+					arrayOfWep[1] = NULL;
+					this->wpInUse1 = wepToEquip;
+					return (Item**) arrayOfWep;
+				}
+				else if((wpInUse1 != NULL) && (wpInUse2 != NULL) && (wepToEquip->numOfHands() == 1)){
+					cout << "Which weapon would you like to put in your inventory?" << endl;
+					cout << "1)" << endl;
+					wpInUse1->print();
+					cout << "2)" << endl;
+					wpInUse2->print();
+					int option2;
+					cin >> option2;
+					if(option2 == 1){
+						arrayOfWep[0] = wpInUse1;
+						arrayOfWep[1] = NULL;
+						this->wpInUse1 = wepToEquip;
+						return (Item**) arrayOfWep;
+					}
+					else if(option2 == 2){
+						arrayOfWep[0] = wpInUse2;
+						arrayOfWep[1] = NULL;
+						this->wpInUse2 = wepToEquip;
+						return (Item**) arrayOfWep;
+					}
+				}
+				else {
+					arrayOfWep[0] = wpInUse1;
+					this->wpInUse1 = wepToEquip;
+					arrayOfWep[1] = this->wpInUse2;
+					this->wpInUse2 = NULL; 
+					return (Item**) arrayOfWep;
+				}
+		}
+	
 		virtual void print(){
 			cout << "======== HERO STATS ============" << endl;
 			Living::print();
@@ -193,12 +219,21 @@ class Monster : public Living{
 		int attackMin;
 		int deffence;
 		double probOfDogde;
+//		list<FireSpell*> fireSpells;
+//		list<IceSpell*> iceSpells;
+//		list<LightingSpell*> lightSpells;
 	public:
 		Monster(string nameI, int healthPowerI, int level, int attackMaxI, int attackMinI, int deffenceI ,double probOfDogdeI) :
-			Living(nameI, healthPowerI,level), attackMax(attackMaxI), attackMin(attackMinI), deffence(deffenceI), probOfDogde(probOfDogdeI){}  		
+			Living(nameI, healthPowerI + 0.1 * level,level), attackMax(attackMaxI), attackMin(attackMinI), deffence(deffenceI), probOfDogde(probOfDogdeI){}  		
 		
 		int getHealth(){
 			return this->healthPower;
+		}
+		
+		int attack(){
+			srand((unsigned int) time(NULL));
+			int attack = rand() % attackMax + attackMin;
+			return attack;
 		}
 		
 		void getAttacked(int attackPoints){
@@ -207,7 +242,36 @@ class Monster : public Living{
 			if(dogde < probOfDogde)
 				return;
 			int finalAttack = attackPoints - deffence;
-			healthPower -= finalAttack;	
+			if(finalAttack <= 0)
+				finalAttack = 0;
+			currentHealth -= finalAttack;
+			if(currentHealth <= 0){
+				cout << this->name << " faints!" << endl;
+				this->faint = 1;
+			}
+			cout << "Current health of " << this->name << " is " << this->currentHealth << endl;
+		}
+		
+		void getAttacked(FireSpell* spell, int attackPoints){
+			srand((unsigned int) time(NULL));
+			double dogde = (double)rand() / RAND_MAX;
+			if(dogde < probOfDogde)
+				return;
+			int finalAttack = attackPoints - deffence;
+			
+			if(finalAttack <= 0)
+				finalAttack = 0;
+			currentHealth -= finalAttack;
+			
+			if(currentHealth <= 0){
+				cout << this->name << " faints!" << endl;
+				this->faint = 1;
+			}
+			cout << "Current health of " << this->name << " is " << this->currentHealth << endl; 	
+		
+//			for(int i = 0; i < fireSpells.size(); i++){
+//				if(spell. <= fireSpells[i])
+//			}
 		}
 		
 		virtual void print(){

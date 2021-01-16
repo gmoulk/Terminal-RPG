@@ -6,7 +6,7 @@ IsTwoHanded:1
 
 Name:Balmung
 Level:0
-Price:30
+Price:30.4
 Damage:1.5
 IsTwoHanded:0
 
@@ -24,7 +24,7 @@ IsTwoHanded:1
 
 Name:Slowstrike
 Level:1
-Price:25
+Price:25.3
 Damage:2.0
 IsTwoHanded:1
 
@@ -36,24 +36,24 @@ IsTwoHanded:0
 
 Name:Force Rod
 Level:1
-Price:41
+Price:41.2
 Damage:5.5
 IsTwoHanded:0
 
 Name:Enchanted Rod
 Level:2
-Price:43
+Price:43.1
 Damage:6.0
 IsTwoHanded:0
 
 Name:Sonic Steel
 Level:2
-Price:41
+Price:41.9
 Damage:5.0
 IsTwoHanded:0
 
 Name:Nirvana
 Level:3
-Price:50
+Price:50.8
 Damage:7.5
 IsTwoHanded:1

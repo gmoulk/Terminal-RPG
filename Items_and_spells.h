@@ -1,5 +1,8 @@
+#pragma once
 #include <iostream>
 #include <string>
+#include <cstdlib>
+#include <time.h>
 using namespace std;
 
 
@@ -22,6 +25,12 @@ public:
     }
     virtual void print() = 0;
     virtual int itemClass() = 0;
+    double getPrice() const{
+		return this->price;
+	}
+	string getName() const{
+		return this->name;
+	}
     // maybe virtual destructor
 };
 
@@ -39,6 +48,7 @@ private:
 public:
     Weapon(int level, double price_to_pay, std::string name, double dmg, bool two_handed)
     :Item(level, price_to_pay, name), damage(dmg), is_two_handed(two_handed){
+    	cout << "[DEBUG] Weapon created with name " << name << " level " << level << " price " << price << " damage " << dmg << endl;  
     }
     
     double weapon_damage(){
@@ -56,6 +66,10 @@ public:
 		cout << "========================" << endl;
 	}
 	
+	int numOfHands(){
+		return this->is_two_handed + 1;
+	}
+	
 	int itemClass(){
 		return 1;
 	}
@@ -68,7 +82,7 @@ private:
     double dmg_red_percentage;
     
 public:
-    Armor(int level, double price_to_pay, std::string name, int dmg)
+    Armor(int level, double price_to_pay, std::string name, double dmg)
     :Item(level, price_to_pay, name), dmg_red_percentage(dmg){
     }
     
@@ -134,10 +148,10 @@ protected:
     const std::string name;
     int least_damage;
     int max_damage;
-
+	double price;
 public:
-    Spell(int level, int  mana, std::string name)
-    :level_needed_to_use(level), mana_to_consume(mana), name(name){
+    Spell(int level, int  mana, std::string name, double price, int max_damage, int least_damage)
+    :level_needed_to_use(level), mana_to_consume(mana), name(name), price(price) , max_damage(max_damage), least_damage(least_damage){
        /*  std::cout << "A Spell has been created\n"; */
     }
     int get_mana() const{
@@ -145,7 +159,23 @@ public:
     }
     // will be implemented later
     // actual type to return is not determined yet
-    double damage_to_do(int dexterity){}  // dexterity could be double but int is preffered
+    double damage_to_do(int dexterity){
+		srand((unsigned) time(NULL));
+		return dexterity % max_damage + least_damage;
+	}  // dexterity could be double but int is preffered
+	
+	void print() const{
+    	cout << " Name: "<< this->name << endl;
+		cout << " Price: " << this->price << endl;
+		cout << " Mana: " << this->mana_to_consume << endl;
+		cout << " Max Damage: " << this->max_damage << endl;
+		cout << " Least Damage: " << this->least_damage << endl;
+		cout << "========================" << endl;
+	}
+	
+	double getPrice() const{
+		return this->price;
+	}
 };
 
 /* one extra effect that lasts for a number of rounds
@@ -163,8 +193,12 @@ class IceSpell:public Spell{
 private:
     double dmg_reduction_percentage;
 public:
-    IceSpell(int level, int  mana, std::string name, double percentage)
-    :Spell(level, mana, name), dmg_reduction_percentage(percentage){ }
+	void print(){
+		cout << "======== ICE SPELL ========" << endl;
+		Spell::print();
+	}
+    IceSpell(int level, int  mana, std::string name, double percentage , double price , int max_damage, int least_damage)
+    :Spell(level, mana, name , price, max_damage, least_damage), dmg_reduction_percentage(percentage){ }
 
 };
 
@@ -173,8 +207,12 @@ class FireSpell:public Spell{
 private:
     double enemy_defence_red_perc;
 public:
-    FireSpell(int level, int  mana, std::string name, double percentage)
-    :Spell(level, mana, name), enemy_defence_red_perc(percentage){}
+	void print(){
+		cout << "======== FIRE SPELL ========" << endl;
+		Spell::print();
+	}
+    FireSpell(int level, int  mana, std::string name, double percentage, double price , int max_damage, int least_damage)
+    :Spell(level, mana, name, price , max_damage , least_damage), enemy_defence_red_perc(percentage){}
 };
 
 
@@ -182,8 +220,12 @@ class LightingSpell:public Spell{
 private:
     double enemy_dodge_red_perc;
 public:
-    LightingSpell(int level, int  mana, std::string name, double percentage)
-    :Spell(level, mana, name), enemy_dodge_red_perc(percentage){}
+	void print(){
+		cout << "======== LIGHTING SPELL ========" << endl;
+		Spell::print();
+	}
+    LightingSpell(int level, int  mana, std::string name, double percentage, double price, int max_damage, int least_damage)
+    :Spell(level, mana, name, price, max_damage, least_damage), enemy_dodge_red_perc(percentage){}
 };
 
 

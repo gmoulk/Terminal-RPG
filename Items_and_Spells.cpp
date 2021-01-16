@@ -88,8 +88,8 @@ protected:
     int max_damage;
 
 public:
-    Spell(int level, int  mana, std::string name)
-    :level_needed_to_use(level), mana_to_consume(mana), name(name){
+    Spell(int level, int  mana, std::string name, int max_damage, int least_damage)
+    :level_needed_to_use(level), mana_to_consume(mana), name(name) , max_damage(max_damage), least_damage(least_damage){
        /*  std::cout << "A Spell has been created\n"; */
     }
     int get_mana() const{
