@@ -254,6 +254,11 @@ private:
                	cout << i + 1 << ")";
 				sp->print();
 			}
+			int spell_index;
+			cin >> spell_index;
+			this->monsters->getAttacked();
+			// gregorh symplhrwse ta an ta katalabeis
+
 		}else if(action == 3){
 			// option 3: drink potion
 
@@ -287,6 +292,7 @@ public:
                     this->heroes->getAttacked(monsters->monsters[i]->attack());
                     break;
                 }
+				// also update everything
             }
         }
         // end of battle
@@ -295,3 +301,4 @@ public:
 
 
 };
+
