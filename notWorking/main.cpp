@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Living.h"
 #include "battle.h"
+#include "market.h"
 //#include "Items_and_spells.h"
 using namespace std;
 
@@ -11,8 +12,9 @@ int main(){
 		team[i] = NULL;
 	}
 	
-	int numberOfCharacters;
-	cin >> numberOfCharacters;
+	int numberOfCharacters = 10;
+	while(numberOfCharacters > 3)
+		cin >> numberOfCharacters;
 	int option;
 	for(int i = 0; i < numberOfCharacters; i++){
 		cout << "Give the name of your hero: ";
@@ -44,20 +46,32 @@ int main(){
 	Dragon* drg = new Dragon("El drago", 0 , 10, 11, 1, 1, 0.1);
 	Spirit* spr = new Spirit("Spirit", 2 , 10, 11, 1, 13, 0.1);
 	Exosceleton* exo = new Exosceleton("Exo", 2 , 10, 12, 12, 1, 0.1);
-	Spell* sp1 = new Spell(0,1,string("fa"),1,2,1);
-	Weapon* wp1 = new Weapon(0,10,"Exalibur",12,1);
+	IceSpell* sp1 = new IceSpell(0, 10, string("Flame"), 0.4, 1.2 , 4, 1);
+//	Weapon* wp1 = new Weapon(0,10,"Exalibur",12,1);
+//	Armor* ar1 = new Armor(0,10,"Altyn",0.2);
 	Monster* teamEnemy[3];
 	teamEnemy[0] = drg;
 	teamEnemy[1] = spr;
 	teamEnemy[2] = exo;
 	monsters_squad* team3 = new monsters_squad(teamEnemy,3);
-	Weapon* wp = new Weapon(1,2,"excalibur",11.0,1);
+//	Weapon* wp = new Weapon(1,2,"excalibur",11.0,1);
 //	cout << team[0]->attack() << endl;
-//	cout << team[0]->attack(sp1) << endl;
+	cout << team[0]->attack(sp1) << endl;
 //	team[0]->getAttacked(7);
 //	drg->getAttacked(3);
-	team2->buy(wp1);
-	Battle bt = Battle(team2,team3);
-	bt.battle();
+	drg->getInfected(sp1);
+	drg->update();
+	drg->update();
+	drg->update();
+	drg->update();
+	drg->update();
+	drg->update();
+	drg->update();
+//	team2->buy(wp1);
+//	team2->buy(ar1);
+//	Battle bt = Battle(team2,team3);
+//	bt.battle();
+//	market* mr = new market();
+//	mr->print();
 	return 0;
 }

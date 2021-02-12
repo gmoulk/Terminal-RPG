@@ -36,7 +36,10 @@ public:
 	void change_armor(int hero_index, int option){
 		if(armors.size() < option)
 			return;
-		armors[option - 1] = (Armor*) heroes[hero_index]->equip(armors[option - 1]);
+		armors[option - 1] = (Armor*) heroes[hero_index - 1]->equip(armors[option - 1]);
+		if(armors[option - 1] == NULL){
+			armors.erase(armors.begin() + option - 1);
+		}
 		for(int i = 0; i < armors.size(); i++){
 		if(armors[i] == NULL && (i != 19 || armors[i + 1] != NULL)){
 			Armor* temp = armors[i];
@@ -51,23 +54,30 @@ public:
 			return;
 		Weapon* w1 = weapons.at(option - 1);
 		w1->print();
-		Weapon** weaps = (Weapon**) heroes[hero_index]->equip(w1); 
-//		for(int i = 0; i < weapons.size(); i++){
-//		if(armors[i] == NULL && (i != 19 || armors[i + 1] != NULL)){
-//			Weapon* temp = weapons[i];
-//			weapons[i] = weapons[i + 1];
-//			weapons[i + 1] = temp;
-//			}
-//		}
-//		if(weaps[1] != NULL)
-//			weapons.push_back(weaps[1]);
-//		delete[] weaps;	
+		Weapon** weaps = (Weapon**) heroes[hero_index]->equip(w1);
+		weapons[option - 1] = weaps[0];
+		if(weapons[option - 1] == NULL)
+			weapons.erase(weapons.begin() + option - 1); 
+		for(int i = 0; i < weapons.size(); i++){
+		if(armors[i] == NULL && (i != 19 || armors[i + 1] != NULL)){
+			Weapon* temp = weapons[i];
+			weapons[i] = weapons[i + 1];
+			weapons[i + 1] = temp;
+			}
+		}
+		if(weaps[1] != NULL)
+			weapons.push_back(weaps[1]);
+		delete[] weaps;	
 	}
 	
 	int attack(int i){
 		return this->heroes[i]->attack();
 	}
 	 
+	int attack(int i, Spell* sp){
+		return this->heroes[i]->attack(sp);	
+	} 
+	
 	void getAttacked(int attackPoints){
 		for(int i = 0; i < 3; i++){
 			if(!this->heroes[i]->isFaint()){
@@ -134,6 +144,19 @@ public:
     void getAttacked(int num,int attack){
     	this->monsters[num]->getAttacked(attack);
 	}
+	
+	void getAttacked(int num,FireSpell* sp){
+		this->monsters[num]->getInfected(sp);
+	}
+	
+	void getAttacked(int num,IceSpell* sp){
+		this->monsters[num]->getInfected(sp);
+	}
+	
+	void getAttacked(int num,LightingSpell* sp){
+		this->monsters[num]->getInfected(sp);
+	}
+	
     friend class Battle;
 };
 
@@ -248,6 +271,15 @@ private:
                	cout << i + 1 << ")";
 				sp->print();
 			}
+			int spell_index;
+			cin >> spell_index;
+			cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << endl;
+			cin >> monster_index;
+			Spell* sp = heroes->spells[spell_index - 1];
+			int attack_power = heroes->attack(hero_index - 1, sp);
+			this->monsters->getAttacked(monster_index - 1,attack_power);
+			//this->monsters->getAttacked(monster_index - 1,sp);
+
 		}else if(action == 3){
 			// option 3: drink potion
 
@@ -281,6 +313,7 @@ public:
                     this->heroes->getAttacked(monsters->monsters[i]->attack());
                     break;
                 }
+				// also update everything
             }
         }
         // end of battle
@@ -289,3 +322,4 @@ public:
 
 
 };
+
