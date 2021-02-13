@@ -440,13 +440,16 @@ public:
                 if (monsters->monsters[i]->getHealth() != 0){
                     // every monster does something if its not dead
                     // i will figure out later what
+                    cout << "Monster " << monsters->monsters[i]->getName() << " attacks!" << endl;
                     this->heroes->getAttacked(monsters->monsters[i]->attack());
                     break;
                 }
 				// also update everything
-				this->heroes->update();
-				this->monsters->update();
+				
             }
+			cout << "DEBUG UPDATES" << endl;
+			this->heroes->update();
+			this->monsters->update();
         }
         // end of battle
         return monsters_are_dead(); 
