@@ -146,6 +146,22 @@ class Hero : public Living{
 				}
 		}
 	
+
+		void use_potion(Potion* potion){ //  which to icnrease?
+			
+			int stat_to_increase = potion->get_stat_to_increase();
+			/* 			1 = strength		2 = dexterity		3 = agility			*/
+			if (stat_to_increase == 1){
+				std::cout << "Strength increased by " << potion->use(this->strength) << " points." << std::endl;
+			}else if(stat_to_increase == 2){
+				std::cout << "Dexterity increased by " << potion->use(this->dexterity) << " points." << std::endl;
+			}else if(stat_to_increase == 3){
+				std::cout << "Agility increased by " << potion->use(this->agility) << " points." << std::endl;
+			}
+			// after usage, potion must be deleted from inventory
+		}
+
+
 		virtual void print(){
 			cout << "======== HERO STATS ============" << endl;
 			Living::print();
@@ -158,11 +174,10 @@ class Hero : public Living{
 		
 		void update(){
 			this->currentHealth += this->currentHealth*0.05;
-			if(this->currentHealth >= this->healthPower)
+			if(this->currentHealth >= this->healthPower){
 				this->currentHealth = this->healthPower;
-			this->currentMagicPower += this->currentMagicPower*0.05;
-			if(this->currentMagicPower >= this->magicPower)
-				this->currentMagicPower = this->magicPower;
+			}
+			this->magicPower += this->magicPower*0.05;
 		}
 		
 		int getLevel(){
@@ -275,6 +290,20 @@ class Monster : public Living{
 		void getAttacked(int effect_type, int attackPoints){ 
 			//(effect type) 1 = ice,  2 = fire, 3 = lighting, the way this information is given will probably change
 			this->getAttacked(attackPoints);	
+			switch (effect_type){
+				case 1: // ice
+					this->effect = new Ice_Effect(this->attackMax);
+					break;
+				case 2:	// fire
+					this->effect = new Fire_Effect(this->deffence);
+					break;
+				case 3:	// lighting
+					this->effect =  new Lighting_effect(this->probOfDogde);
+					break;
+				
+			}
+			
+			this->effect->apply_effect();
 		}
 		
 		virtual void print(){
@@ -312,14 +341,14 @@ class Monster : public Living{
 			if(this->effect != NULL){
 				if(this->effect->update()){
 					cout << "Effect on!" << endl;
-					this->effect->debug();
+					cout << this->deffence << endl;
 					return;	
 				}
 				else{
 					cout << "The effect is over!" << endl;
-					cout << "{Max attack} " << this->attackMax << endl;
 					delete this->effect;	
-					this->effect = NULL;				
+					this->effect = NULL;
+					cout << this->deffence << endl;				
 				}
 			}	
 		}
