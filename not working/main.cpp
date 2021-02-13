@@ -2,6 +2,7 @@
 #include "Living.h"
 #include "battle.h"
 #include "market.h"
+#include "grid.h"
 //#include "Items_and_spells.h"
 using namespace std;
 
@@ -47,8 +48,8 @@ int main(){
 	Spirit* spr = new Spirit("Spirit", 2 , 10, 11, 1, 13, 0.1);
 	Exosceleton* exo = new Exosceleton("Exo", 2 , 10, 12, 12, 1, 0.1);
 	IceSpell* sp1 = new IceSpell(0, 10, string("Flame"), 0.4, 1.2 , 4, 1);
-//	Weapon* wp1 = new Weapon(0,10,"Exalibur",12,1);
-//	Armor* ar1 = new Armor(0,10,"Altyn",0.2);
+	Weapon* wp1 = new Weapon(0,10,"Exalibur",12,1);
+	Armor* ar1 = new Armor(0,10,"Altyn",0.2);
 	Monster* teamEnemy[3];
 	teamEnemy[0] = drg;
 	teamEnemy[1] = spr;
@@ -56,22 +57,26 @@ int main(){
 	monsters_squad* team3 = new monsters_squad(teamEnemy,3);
 //	Weapon* wp = new Weapon(1,2,"excalibur",11.0,1);
 //	cout << team[0]->attack() << endl;
-	cout << team[0]->attack(sp1) << endl;
+//	cout << team[0]->attack(sp1) << endl;
 //	team[0]->getAttacked(7);
 //	drg->getAttacked(3);
-	drg->getInfected(sp1);
-	drg->update();
-	drg->update();
-	drg->update();
-	drg->update();
-	drg->update();
-	drg->update();
-	drg->update();
+//	drg->getInfected(sp1);
+//	drg->update();
+//	drg->update();
+//	drg->update();
+//	drg->update();
+//	drg->update();
+//	drg->update();
+//	drg->update();
 //	team2->buy(wp1);
 //	team2->buy(ar1);
-//	Battle bt = Battle(team2,team3);
-//	bt.battle();
-//	market* mr = new market();
-//	mr->print();
+	team2->buy(sp1);
+//	market* mr = new market(team2);
+//	mr->interact();
+	Battle bt = Battle(team2,team3);
+	bt.battle();
+//	team2->printWeapons();
+//	team2->printArmors();
+//	commonSquare* cs = new commonSquare(team2);
 	return 0;
 }

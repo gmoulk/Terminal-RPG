@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include "Items_and_spells.h"
 #include "battle.h"
@@ -27,7 +28,6 @@ class market{
 			int num_of_weapons = rand() % max_weapons;
 			int num_of_armors = rand() % max_armors;
 			int num_of_spells = rand() % max_spells;
-			cout << "[DEBUG NUM] " << num_of_weapons;
 			//Max potions
 			for(int i = 0; i < num_of_weapons; i++){
 				ifstream in("weapons.txt");
@@ -104,11 +104,9 @@ class market{
 						if(j % 2==0){
 							if(j == 2){
 								name = string(token1);
-								cout << "[DEBUG] NAME " << name << endl;
 							}
 							else if(j == 4){
 								level = atoi(token1);
-								cout << "[DEBUG] LEVEL " << level << endl;
 							}
 							else if(j == 6)
 								price = atof(token1);	
@@ -154,11 +152,9 @@ class market{
 						if(j % 2==0){
 							if(j == 2){
 								class_ = string(token1);
-								cout << "[DEBUG] NAME " << name << endl;
 							}
 							else if(j == 4){
 								name = string(token1);
-								cout << "[DEBUG] LEVEL " << level << endl;
 							}
 							else if(j == 6)
 								level = atoi(token1);	
@@ -208,7 +204,6 @@ class market{
 				cout << i + 1 << ")" << endl;
 				Weapon* wp = weapons[i];
 				wp->print();
-				i++;
 			}
 		}
 		
@@ -218,7 +213,6 @@ class market{
 				cout << i + 1 << ")" << endl;
 				Armor* ar = armors[i];
 				ar->print();
-				i++;
 			}
 		}
 		
@@ -229,21 +223,18 @@ class market{
 				cout << i + 1 << ")" << endl;
 				Spell* sp = iceSpells[i];
 				sp->print();
-				i++;
 			}
 			cout << "==== FIRE SPELLS ====" << endl;
 			for(int i = 0; i < fireSpells.size(); i++){
 				cout << i + 1 << ")" << endl;
 				Spell* sp = fireSpells[i];
 				sp->print();
-				i++;
 			}
 			cout << "==== LIGHTING SPELLS ====" << endl;
 			for(int i = 0; i < lightSpells.size(); i++){
 				cout << i + 1 << ")" << endl;
 				Spell* sp = lightSpells[i];
 				sp->print();
-				i++;
 			}
 		}
 		

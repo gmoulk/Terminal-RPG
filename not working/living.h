@@ -150,6 +150,7 @@ class Hero : public Living{
 			cout << "======== HERO STATS ============" << endl;
 			Living::print();
 			cout << "Current Health: " << this->currentHealth << endl;
+			cout << "Current Magic Power: " << this->currentMagicPower << endl;
 			cout << "Strength: " << this->strength << endl;
 			cout << "Dexterity: " << this->dexterity << endl;
 			cout << "Agility: " << this->agility << endl; 
@@ -162,12 +163,15 @@ class Hero : public Living{
 			}
 			this->magicPower += this->magicPower*0.05;
 		}
+		
+		int getLevel(){
+			return this->level;
+		}
 };
 
 class Warrior : public Hero{
 	public:
 		Warrior(string nameI) : Hero(nameI,100,80,4,1,3) {
-			cout << "[DEBUG] Warrior created!" << endl;
 		}
 		
 		void levelUp(){
@@ -189,7 +193,6 @@ class Warrior : public Hero{
 class Sorcerer : public Hero{
 	public:
 		Sorcerer(string nameI) : Hero(nameI,70,110,1,4,4) {
-			cout << "[DEBUG] Sorcerer created!" << endl;
 		}
 		void levelUp(){
 			cout << this->name << " has been leveled up!" << endl;
@@ -210,7 +213,6 @@ class Sorcerer : public Hero{
 class Paladin : public Hero{
 	public:
 		Paladin(string nameI) : Hero(nameI,90,95,3,3,1) {
-			cout << "[DEBUG] Paladin created!" << endl;
 		}
 		
 		void levelUp(){
@@ -339,8 +341,7 @@ class Monster : public Living{
 class Dragon : public Monster{
 	public:
 		Dragon(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, double probOfDogdeI):
-			Monster(nameI, level, healthPowerI, attackMaxI + 1.9 * level, attackMinI + 1.9 * level, defenceI + 1.2 * level, probOfDogdeI + 0.05 * level) {
-				cout << "[DEBUG] dragon created" << endl;			
+			Monster(nameI, level, healthPowerI, attackMaxI + 1.9 * level, attackMinI + 1.9 * level, defenceI + 1.2 * level, probOfDogdeI + 0.05 * level) {			
 			}
 			
 		void print(){
@@ -353,7 +354,6 @@ class Exosceleton : public Monster{
 	public:
 		Exosceleton(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, double probOfDogdeI):
 			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.9 * level, probOfDogdeI + 0.05 * level) {
-				cout << "[DEBUG] exosceleton created" << endl;
 			}
 			
 		void print(){
@@ -366,7 +366,6 @@ class  Spirit : public Monster{
 	public:
 		Spirit(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, double probOfDogdeI):
 			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.2 * level, probOfDogdeI + 0.08 * level) {
-				cout << "[DEBUG] spirit created" << endl;
 			}
 	void print(){
 			Monster::print();

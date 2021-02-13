@@ -47,9 +47,7 @@ private:
 
 public:
     Weapon(int level, double price_to_pay, std::string name, double dmg, bool two_handed)
-    :Item(level, price_to_pay, name), damage(dmg), is_two_handed(two_handed){
-    	cout << "[DEBUG] Weapon created with name " << name << " level " << level << " price " << price << " damage " << dmg << endl;  
-    }
+    :Item(level, price_to_pay, name), damage(dmg), is_two_handed(two_handed){}
     
     double weapon_damage(){
         return damage;
@@ -265,11 +263,7 @@ public:
     :value_to_reduce(to_reduce),initial_value(to_reduce), Effect(rounds, percentage){}
 
     void apply_effect(){
-    	cout << "DEBUG 1 " << percentage_reduction << endl;
-    	cout << "DEBUG 1.5 "<< value_to_reduce << endl;
-    	cout << "DEBUG 2 " << percentage_reduction*value_to_reduce << endl;
         value_to_reduce = value_to_reduce - percentage_reduction*value_to_reduce;
-        cout << "DEBUG " << value_to_reduce << endl;
     }
 
     bool update(){

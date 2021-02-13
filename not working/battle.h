@@ -83,6 +83,20 @@ public:
 		return NULL;		
 	}
 	
+	void printArmors(){
+		for(int i = 0; i < armors.size(); i++){
+			Armor* ar = this->armors[i];
+			ar->print();
+		}
+	}
+	
+	void printWeapons(){
+		for(int i = 0; i < weapons.size(); i++){
+			Weapon* wp = this->weapons[i];
+			wp->print();
+		}
+	}
+	
 	void change_armor(int hero_index, int option){
 		if(armors.size() < option)
 			return;
@@ -182,7 +196,26 @@ public:
 			return 1;
 		}
 		return 0;
-	}	    
+	}
+	
+	void update(){
+		for(int i = 0; i < 3; i++){
+			if(this->heroes[i] != NULL && !this->heroes[i]->isFaint()){
+				this->heroes[i]->update();
+			}
+		}
+	}
+	
+	int averageLevel(){
+		int avgLvl = 0;
+		for(int i = 0; i < 3; i++){
+			if(this->heroes[i] != NULL)
+				avgLvl += this->heroes[i]->getLevel();	
+		}
+		avgLvl = avgLvl / 3;
+		return avgLvl;
+	}
+		    
     friend class Battle;
 };
 
@@ -226,6 +259,13 @@ public:
 		this->monsters[num]->getInfected(sp);
 	}
 	
+	void update(){
+		for(int i = 0; i < 6; i++){
+			if(this->monsters[i] != NULL && !this->monsters[i]->isFaint()){
+				this->monsters[i]->update();
+			}
+		}
+	}
     friend class Battle;
 };
 
@@ -404,6 +444,8 @@ public:
                     break;
                 }
 				// also update everything
+				this->heroes->update();
+				this->monsters->update();
             }
         }
         // end of battle
