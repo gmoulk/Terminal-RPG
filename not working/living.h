@@ -146,6 +146,22 @@ class Hero : public Living{
 				}
 		}
 	
+
+		void use_potion(Potion* potion){ //  which to icnrease?
+			
+			int stat_to_increase = potion->get_stat_to_increase();
+			/* 			1 = strength		2 = dexterity		3 = agility			*/
+			if (stat_to_increase == 1){
+				std::cout << "Strength increased by " << potion->use(this->strength) << " points." << std::endl;
+			}else if(stat_to_increase == 2){
+				std::cout << "Dexterity increased by " << potion->use(this->dexterity) << " points." << std::endl;
+			}else if(stat_to_increase == 3){
+				std::cout << "Agility increased by " << potion->use(this->agility) << " points." << std::endl;
+			}
+			// after usage, potion must be deleted from inventory
+		}
+
+
 		virtual void print(){
 			cout << "======== HERO STATS ============" << endl;
 			Living::print();

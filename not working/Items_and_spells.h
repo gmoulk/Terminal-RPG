@@ -24,7 +24,7 @@ public:
         /* std::cout << "An item has been created\n"; */
     }
     virtual void print() = 0;
-    virtual int itemClass() = 0;
+    virtual int itemClass() = 0;                                
     double getPrice() const{
 		return this->price;
 	}
@@ -104,33 +104,6 @@ public:
 };
 
 
-class Potion:public  Item{
-
-private:
-    double stat_increase_percentage;
-public:
-    Potion(int level, double price_to_pay, std::string name, int increase_percentage)
-    :Item(level, price_to_pay, name), stat_increase_percentage(increase_percentage){
-    }
-    
-    double get_increase_percentage() const{
-        return stat_increase_percentage;
-    }
-    
-    void print(){
-    	cout << "=======  POTION  =======" << endl;
-    	cout << " Name: "<< this->name << endl;
-		cout << " Price: " << this->price << endl;
-		cout << " Statistic increase percentage: " << this->stat_increase_percentage << endl;
-		cout << " Info: Potion that increases one of "<< endl;
-		cout << "        your stats "<< endl;
-		cout << "========================" << endl;
-	}
-	
-	int itemClass(){
-		return 3;
-	}
-};
 
 
 
@@ -238,18 +211,21 @@ public:
 	}
 };
 
+
+
 class Effect{
 
 protected:
     int rounds_left;
     double percentage_reduction;
+
 public:
     Effect(int rounds=3, double percentage=0.33)
     :rounds_left(rounds), percentage_reduction(percentage){}
-
     virtual bool update() = 0;
     virtual void apply_effect() = 0;
 };
+
 
 
 class Fire_Effect: public Effect{
@@ -277,7 +253,9 @@ public:
 };
 
 
+
 class Ice_Effect:public Fire_Effect{
+
 public:
     Ice_Effect(int& to_reduce, int rounds=3, double percentage=0.33)
     :Fire_Effect( to_reduce,  rounds=3,  percentage=0.33){}
@@ -317,3 +295,47 @@ public:
     }
 };
 
+
+// POTIONS
+
+
+class Potion:public  Item{
+
+private:
+    double stat_increase_percentage;
+    int type;
+    /* 
+		1 = strength
+		2 = dexterity
+		3 = agility
+	*/	
+			
+public:
+    Potion(int level, double price_to_pay, std::string name, int increase_percentage)
+    :Item(level, price_to_pay, name), stat_increase_percentage(increase_percentage){
+    }
+    
+    double use(int& stat_to_increase) {
+        int increase = stat_increase_percentage*stat_to_increase;
+        stat_to_increase += increase;
+        return increase;
+    }
+
+    int get_stat_to_increase() const{
+        return type;
+    }
+    
+    void print(){
+    	cout << "=======  POTION  =======" << endl;
+    	cout << " Name: "<< this->name << endl;
+		cout << " Price: " << this->price << endl;
+		cout << " Statistic increase percentage: " << this->stat_increase_percentage << endl;
+		cout << " Info: Potion that increases one of "<< endl;
+		cout << "        your stats "<< endl;
+		cout << "========================" << endl;
+	}
+	
+	int itemClass(){
+		return 3;
+	}
+};
