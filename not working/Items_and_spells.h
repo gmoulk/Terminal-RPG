@@ -67,10 +67,6 @@ public:
 	int numOfHands(){
 		return this->is_two_handed + 1;
 	}
-	
-	int itemClass(){
-		return 1;
-	}
 };
 
 
@@ -97,10 +93,6 @@ public:
 		cout << "        enemy attack points "<< endl;
 		cout << "========================" << endl;
 	}
-	
-	int itemClass(){
-		return 2;
-	}
 };
 
 
@@ -125,10 +117,6 @@ public:
 		cout << " Info: Potion that increases one of "<< endl;
 		cout << "        your stats "<< endl;
 		cout << "========================" << endl;
-	}
-	
-	int itemClass(){
-		return 3;
 	}
 };
 
