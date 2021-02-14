@@ -97,6 +97,7 @@ class Hero : public Living{
 			this->currentHealth -= attackFinal;
 			if(this->currentHealth <= 0){
 				cout << this->getName() << " faints!" << endl;
+				this->currentHealth = 0;
 				this->faint = 1;
 			}
 			cout << "Current health of " << this->name << " is " << this->currentHealth << endl;
@@ -146,22 +147,6 @@ class Hero : public Living{
 				}
 		}
 	
-
-		void use_potion(Potion* potion){ //  which to icnrease?
-			
-			int stat_to_increase = potion->get_stat_to_increase();
-			/* 			1 = strength		2 = dexterity		3 = agility			*/
-			if (stat_to_increase == 1){
-				std::cout << "Strength increased by " << potion->use(this->strength) << " points." << std::endl;
-			}else if(stat_to_increase == 2){
-				std::cout << "Dexterity increased by " << potion->use(this->dexterity) << " points." << std::endl;
-			}else if(stat_to_increase == 3){
-				std::cout << "Agility increased by " << potion->use(this->agility) << " points." << std::endl;
-			}
-			// after usage, potion must be deleted from inventory
-		}
-
-
 		virtual void print(){
 			cout << "======== HERO STATS ============" << endl;
 			Living::print();
@@ -174,14 +159,42 @@ class Hero : public Living{
 		
 		void update(){
 			this->currentHealth += this->currentHealth*0.05;
-			if(this->currentHealth >= this->healthPower){
+			if(this->currentHealth >= this->healthPower)
 				this->currentHealth = this->healthPower;
-			}
-			this->magicPower += this->magicPower*0.05;
+			this->currentMagicPower += this->currentMagicPower*0.05;
+			if(this->currentMagicPower >= this->magicPower)
+				this->currentMagicPower = this->magicPower;
 		}
 		
 		int getLevel(){
 			return this->level;
+		}
+		
+		void getExperience(int numOfMonsters){
+			if(this->level < 1)
+				this->experience += 0,4*this->experience*numOfMonsters;
+			if(this->level < 4)
+				this->experience += 0,2*this->experience*numOfMonsters;
+			else
+				this->experience += 0,1*this->experience*numOfMonsters;
+			
+			if(this->experience >= this->experienceForLevelUp){
+				this->levelUp();
+			}		
+		}
+		
+		void use_potion(Potion* potion){ //  which to icnrease?
+			
+			int stat_to_increase = potion->get_stat_to_increase();
+			/* 			1 = strength		2 = dexterity		3 = agility			*/
+			if (stat_to_increase == 1){
+				std::cout << "Strength increased by " << potion->use(this->strength) << " points." << std::endl;
+			}else if(stat_to_increase == 2){
+				std::cout << "Dexterity increased by " << potion->use(this->dexterity) << " points." << std::endl;
+			}else if(stat_to_increase == 3){
+				std::cout << "Agility increased by " << potion->use(this->agility) << " points." << std::endl;
+			}
+			// after usage, potion must be deleted from inventory
 		}
 };
 
@@ -257,20 +270,27 @@ class Monster : public Living{
 // 		only one effect per monster
 
 	public:
-		Monster(string nameI, int healthPowerI, int level, int attackMaxI, int attackMinI, int deffenceI ,double probOfDogdeI) :
+		Monster(string nameI, int level, int healthPowerI, int attackMaxI, int attackMinI, int deffenceI ,double probOfDogdeI) :
 			Living(nameI, healthPowerI + 0.1 * level,level), attackMax(attackMaxI), attackMin(attackMinI), deffence(deffenceI), probOfDogde(probOfDogdeI), effect(NULL){}  		
 		
-		int getHealth(){
-			return this->healthPower;
+		int getcurrentHealth(){
+			return this->currentHealth;
 		}
 		
 		int attack(){
 			srand((unsigned int) time(NULL));
+			if(attackMax <= 0)
+				return 0;
 			int attack = rand() % attackMax + attackMin;
+			cout << "MONSTER ATTACK IS " << attack << endl;
 			return attack;
 		}
 		
 		void getAttacked(int attackPoints){
+			if(this->currentHealth == 0){
+				cout << "Stop " << this->name << " is already faint!" << endl;
+				return;
+			}
 			srand((unsigned int) time(NULL));
 			double dogde = (double)rand() / RAND_MAX;
 			if(dogde < probOfDogde)
@@ -282,6 +302,7 @@ class Monster : public Living{
 			if(currentHealth <= 0){
 				cout << this->name << " faints!" << endl;
 				this->faint = 1;
+				this->currentHealth = 0;
 			}
 			cout << "Current health of " << this->name << " is " << this->currentHealth << endl;
 		}
@@ -290,20 +311,6 @@ class Monster : public Living{
 		void getAttacked(int effect_type, int attackPoints){ 
 			//(effect type) 1 = ice,  2 = fire, 3 = lighting, the way this information is given will probably change
 			this->getAttacked(attackPoints);	
-			switch (effect_type){
-				case 1: // ice
-					this->effect = new Ice_Effect(this->attackMax);
-					break;
-				case 2:	// fire
-					this->effect = new Fire_Effect(this->deffence);
-					break;
-				case 3:	// lighting
-					this->effect =  new Lighting_effect(this->probOfDogde);
-					break;
-				
-			}
-			
-			this->effect->apply_effect();
 		}
 		
 		virtual void print(){
@@ -325,7 +332,7 @@ class Monster : public Living{
 			srand((unsigned) time(NULL));
 			if(this->effect != NULL)
 				delete this->effect;
-			this->effect = new Ice_Effect(this->deffence,rand() % 5,sp->getRed());
+			this->effect = new Ice_Effect(this->attackMax,rand() % 5,sp->getRed());
 			this->effect->apply_effect(); 
 		}
 		
@@ -341,14 +348,14 @@ class Monster : public Living{
 			if(this->effect != NULL){
 				if(this->effect->update()){
 					cout << "Effect on!" << endl;
-					cout << this->deffence << endl;
+					this->effect->debug();
 					return;	
 				}
 				else{
 					cout << "The effect is over!" << endl;
+					cout << "{Max attack} " << this->attackMax << endl;
 					delete this->effect;	
-					this->effect = NULL;
-					cout << this->deffence << endl;				
+					this->effect = NULL;				
 				}
 			}	
 		}

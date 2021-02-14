@@ -24,7 +24,7 @@ public:
         /* std::cout << "An item has been created\n"; */
     }
     virtual void print() = 0;
-    virtual int itemClass() = 0;                                
+    virtual int itemClass() = 0;
     double getPrice() const{
 		return this->price;
 	}
@@ -104,6 +104,45 @@ public:
 };
 
 
+class Potion:public  Item{
+
+private:
+    double stat_increase_percentage;
+    int type;
+    /* 
+		1 = strength
+		2 = dexterity
+		3 = agility
+	*/	
+			
+public:
+    Potion(int level, double price_to_pay, std::string name, double increase_percentage, int type)
+    :Item(level, price_to_pay, name), stat_increase_percentage(increase_percentage),type(type){}
+    
+    double use(int& stat_to_increase) {
+        int increase = stat_increase_percentage * stat_to_increase;
+        stat_to_increase += increase;
+        return increase;
+    }
+
+    int get_stat_to_increase() const{
+        return type;
+    }
+    
+    void print(){
+    	cout << "=======  POTION  =======" << endl;
+    	cout << " Name: "<< this->name << endl;
+		cout << " Price: " << this->price << endl;
+		cout << " Statistic increase percentage: " << this->stat_increase_percentage << endl;
+		cout << " Info: Potion that increases one of "<< endl;
+		cout << "        your stats "<< endl;
+		cout << "========================" << endl;
+	}
+	
+	int itemClass(){
+		return 3;
+	}
+};
 
 
 
@@ -134,6 +173,7 @@ public:
     double damage_to_do(int dexterity){
 		srand((unsigned) time(NULL));
 		int rand_num = rand() % dexterity;
+		cout << "DEBUG MAX DAMAGE IS " << rand_num % max_damage + least_damage << endl;
 		return rand_num % max_damage + least_damage;
 	}  // dexterity could be double but int is preffered
 	
@@ -211,21 +251,19 @@ public:
 	}
 };
 
-
-
 class Effect{
 
 protected:
     int rounds_left;
     double percentage_reduction;
-
 public:
     Effect(int rounds=3, double percentage=0.33)
     :rounds_left(rounds), percentage_reduction(percentage){}
+
     virtual bool update() = 0;
     virtual void apply_effect() = 0;
+    virtual void debug() = 0;
 };
-
 
 
 class Fire_Effect: public Effect{
@@ -250,12 +288,14 @@ public:
         rounds_left--;
         return true;
     }
+    
+    void debug(){
+    	cout << "{DEBUG} initial value: " << this->initial_value << " value to reduce " << this->value_to_reduce << endl;
+	}
 };
 
 
-
 class Ice_Effect:public Fire_Effect{
-
 public:
     Ice_Effect(int& to_reduce, int rounds=3, double percentage=0.33)
     :Fire_Effect( to_reduce,  rounds=3,  percentage=0.33){}
@@ -268,6 +308,10 @@ public:
         rounds_left--;
         return true;
     }
+    
+	void debug(){
+    	cout << "{DEBUG} initial value: " << this->initial_value << " value to reduce " << this->value_to_reduce << endl;
+	}
 };
 
 
@@ -293,49 +337,9 @@ public:
         rounds_left--;
         return true;
     }
-};
-
-
-// POTIONS
-
-
-class Potion:public  Item{
-
-private:
-    double stat_increase_percentage;
-    int type;
-    /* 
-		1 = strength
-		2 = dexterity
-		3 = agility
-	*/	
-			
-public:
-    Potion(int level, double price_to_pay, std::string name, int increase_percentage)
-    :Item(level, price_to_pay, name), stat_increase_percentage(increase_percentage){
-    }
     
-    double use(int& stat_to_increase) {
-        int increase = stat_increase_percentage*stat_to_increase;
-        stat_to_increase += increase;
-        return increase;
-    }
-
-    int get_stat_to_increase() const{
-        return type;
-    }
-    
-    void print(){
-    	cout << "=======  POTION  =======" << endl;
-    	cout << " Name: "<< this->name << endl;
-		cout << " Price: " << this->price << endl;
-		cout << " Statistic increase percentage: " << this->stat_increase_percentage << endl;
-		cout << " Info: Potion that increases one of "<< endl;
-		cout << "        your stats "<< endl;
-		cout << "========================" << endl;
-	}
-	
-	int itemClass(){
-		return 3;
+     void debug(){
+    	cout << "{DEBUG} initial value: " << this->initial_value << " value to reduce " << this->value_to_reduce << endl;
 	}
 };
+
