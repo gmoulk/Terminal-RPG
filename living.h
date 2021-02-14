@@ -32,11 +32,14 @@ class Living{
 		bool isFaint() const{
 			return this->faint;
 		}
+		
+		virtual void update() = 0;
 };
 
 class Hero : public Living{
 	protected:
 		int magicPower;
+		int currentMagicPower;
 		int strength;
 		int dexterity;
 		int agility;
@@ -51,7 +54,7 @@ class Hero : public Living{
 		
 	public:
 		Hero(string nameI, int healthPowerI,int magicPowerI, int strengthI, int dexterityI, int agilityI) : Living(nameI,healthPowerI,0) , 
-			magicPower(magicPowerI), strength(strengthI), dexterity(dexterityI), agility(agilityI), experience(0), experienceForLevelUp(30), numOfItems(0), currentHealth(healthPowerI), armInUse(NULL) {
+			magicPower(magicPowerI), currentMagicPower(magicPowerI),strength(strengthI), dexterity(dexterityI), agility(agilityI), experience(0), experienceForLevelUp(30), numOfItems(0), currentHealth(healthPowerI), armInUse(NULL) {
 				wpInUse1 = NULL;
 				wpInUse2 = NULL;
 			}
@@ -74,9 +77,13 @@ class Hero : public Living{
 		}
 		
 		int attack(Spell* spell_){
-			int totalAttack;
-			totalAttack = spell_->damage_to_do(this->dexterity);
-			return totalAttack;
+			int currentMagic = this->currentMagicPower - spell_->get_mana();
+			if(currentMagic >= 0){
+				int totalAttack;
+				totalAttack = spell_->damage_to_do(this->dexterity);
+				this->currentMagicPower = currentMagic;
+				return totalAttack;
+			}
 		}
 		
 		void getAttacked(int attackPoints){
@@ -90,6 +97,7 @@ class Hero : public Living{
 			this->currentHealth -= attackFinal;
 			if(this->currentHealth <= 0){
 				cout << this->getName() << " faints!" << endl;
+				this->currentHealth = 0;
 				this->faint = 1;
 			}
 			cout << "Current health of " << this->name << " is " << this->currentHealth << endl;
@@ -143,16 +151,43 @@ class Hero : public Living{
 			cout << "======== HERO STATS ============" << endl;
 			Living::print();
 			cout << "Current Health: " << this->currentHealth << endl;
+			cout << "Current Magic Power: " << this->currentMagicPower << endl;
 			cout << "Strength: " << this->strength << endl;
 			cout << "Dexterity: " << this->dexterity << endl;
 			cout << "Agility: " << this->agility << endl; 
+		}
+		
+		void update(){
+			this->currentHealth += this->currentHealth*0.05;
+			if(this->currentHealth >= this->healthPower)
+				this->currentHealth = this->healthPower;
+			this->currentMagicPower += this->currentMagicPower*0.05;
+			if(this->currentMagicPower >= this->magicPower)
+				this->currentMagicPower = this->magicPower;
+		}
+		
+		int getLevel(){
+			return this->level;
+		}
+		
+		void use_potion(Potion* potion){ //  which to icnrease?
+			
+			int stat_to_increase = potion->get_stat_to_increase();
+			/* 			1 = strength		2 = dexterity		3 = agility			*/
+			if (stat_to_increase == 1){
+				std::cout << "Strength increased by " << potion->use(this->strength) << " points." << std::endl;
+			}else if(stat_to_increase == 2){
+				std::cout << "Dexterity increased by " << potion->use(this->dexterity) << " points." << std::endl;
+			}else if(stat_to_increase == 3){
+				std::cout << "Agility increased by " << potion->use(this->agility) << " points." << std::endl;
+			}
+			// after usage, potion must be deleted from inventory
 		}
 };
 
 class Warrior : public Hero{
 	public:
 		Warrior(string nameI) : Hero(nameI,100,80,4,1,3) {
-			cout << "[DEBUG] Warrior created!" << endl;
 		}
 		
 		void levelUp(){
@@ -174,7 +209,6 @@ class Warrior : public Hero{
 class Sorcerer : public Hero{
 	public:
 		Sorcerer(string nameI) : Hero(nameI,70,110,1,4,4) {
-			cout << "[DEBUG] Sorcerer created!" << endl;
 		}
 		void levelUp(){
 			cout << this->name << " has been leveled up!" << endl;
@@ -195,7 +229,6 @@ class Sorcerer : public Hero{
 class Paladin : public Hero{
 	public:
 		Paladin(string nameI) : Hero(nameI,90,95,3,3,1) {
-			cout << "[DEBUG] Paladin created!" << endl;
 		}
 		
 		void levelUp(){
@@ -224,20 +257,27 @@ class Monster : public Living{
 // 		only one effect per monster
 
 	public:
-		Monster(string nameI, int healthPowerI, int level, int attackMaxI, int attackMinI, int deffenceI ,double probOfDogdeI) :
+		Monster(string nameI, int level, int healthPowerI, int attackMaxI, int attackMinI, int deffenceI ,double probOfDogdeI) :
 			Living(nameI, healthPowerI + 0.1 * level,level), attackMax(attackMaxI), attackMin(attackMinI), deffence(deffenceI), probOfDogde(probOfDogdeI), effect(NULL){}  		
 		
-		int getHealth(){
-			return this->healthPower;
+		int getcurrentHealth(){
+			return this->currentHealth;
 		}
 		
 		int attack(){
 			srand((unsigned int) time(NULL));
+			if(attackMax <= 0)
+				return 0;
 			int attack = rand() % attackMax + attackMin;
+			cout << "MONSTER ATTACK IS " << attack << endl;
 			return attack;
 		}
 		
 		void getAttacked(int attackPoints){
+			if(this->currentHealth == 0){
+				cout << "Stop " << this->name << " is already faint!" << endl;
+				return;
+			}
 			srand((unsigned int) time(NULL));
 			double dogde = (double)rand() / RAND_MAX;
 			if(dogde < probOfDogde)
@@ -249,6 +289,7 @@ class Monster : public Living{
 			if(currentHealth <= 0){
 				cout << this->name << " faints!" << endl;
 				this->faint = 1;
+				this->currentHealth = 0;
 			}
 			cout << "Current health of " << this->name << " is " << this->currentHealth << endl;
 		}
@@ -257,20 +298,6 @@ class Monster : public Living{
 		void getAttacked(int effect_type, int attackPoints){ 
 			//(effect type) 1 = ice,  2 = fire, 3 = lighting, the way this information is given will probably change
 			this->getAttacked(attackPoints);	
-			switch (effect_type){
-				case 1: // ice
-					this->effect = new Ice_Effect(this->attackMax);
-					break;
-				case 2:	// fire
-					this->effect = new Fire_Effect(this->deffence);
-					break;
-				case 3:	// lighting
-					this->effect =  new Lighting_effect(this->probOfDogde);
-					break;
-				
-			}
-			
-			this->effect->apply_effect();
 		}
 		
 		virtual void print(){
@@ -278,13 +305,53 @@ class Monster : public Living{
 			Living::print();
 			cout << "Current Health: " << this->currentHealth << endl; 
 		}
+		
+		bool getInfected(FireSpell* sp){
+			srand((unsigned) time(NULL));
+			if(this->effect != NULL)
+				delete this->effect;
+			this->effect = new Fire_Effect(this->deffence,rand() % 5,sp->getRed());
+			cout << "Infected by FireSpell!" << endl;
+			this->effect->apply_effect();
+		}
+		
+		bool getInfected(IceSpell* sp){
+			srand((unsigned) time(NULL));
+			if(this->effect != NULL)
+				delete this->effect;
+			this->effect = new Ice_Effect(this->attackMax,rand() % 5,sp->getRed());
+			this->effect->apply_effect(); 
+		}
+		
+		bool getInfected(LightingSpell* sp){
+			srand((unsigned) time(NULL));
+			if(this->effect != NULL)
+				delete this->effect;
+			this->effect = new Lighting_effect(this->probOfDogde,rand() % 5,sp->getRed());
+			this->effect->apply_effect(); 
+		}
+		
+		void update(){
+			if(this->effect != NULL){
+				if(this->effect->update()){
+					cout << "Effect on!" << endl;
+					this->effect->debug();
+					return;	
+				}
+				else{
+					cout << "The effect is over!" << endl;
+					cout << "{Max attack} " << this->attackMax << endl;
+					delete this->effect;	
+					this->effect = NULL;				
+				}
+			}	
+		}
 };
 
 class Dragon : public Monster{
 	public:
 		Dragon(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, double probOfDogdeI):
-			Monster(nameI, level, healthPowerI, attackMaxI + 1.9 * level, attackMinI + 1.9 * level, defenceI + 1.2 * level, probOfDogdeI + 0.05 * level) {
-				cout << "[DEBUG] dragon created" << endl;			
+			Monster(nameI, level, healthPowerI, attackMaxI + 1.9 * level, attackMinI + 1.9 * level, defenceI + 1.2 * level, probOfDogdeI + 0.05 * level) {			
 			}
 			
 		void print(){
@@ -297,7 +364,6 @@ class Exosceleton : public Monster{
 	public:
 		Exosceleton(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, double probOfDogdeI):
 			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.9 * level, probOfDogdeI + 0.05 * level) {
-				cout << "[DEBUG] exosceleton created" << endl;
 			}
 			
 		void print(){
@@ -310,7 +376,6 @@ class  Spirit : public Monster{
 	public:
 		Spirit(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, double probOfDogdeI):
 			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.2 * level, probOfDogdeI + 0.08 * level) {
-				cout << "[DEBUG] spirit created" << endl;
 			}
 	void print(){
 			Monster::print();

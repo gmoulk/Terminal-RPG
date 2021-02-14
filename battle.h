@@ -15,7 +15,10 @@ private:
 	int money;
 	vector<Armor*> armors;
 	vector<Weapon*> weapons;
-	vector<Spell*> spells;
+	vector<IceSpell*> iceSpells;
+	vector<FireSpell*> fireSpells;
+	vector<LightingSpell*> lightSpells;
+	vector<Potion*> potions;
 public:
 	heroe_squad(Hero* hero1, Hero* hero2=NULL, Hero* hero3=NULL, int _number_of_heroes = 1)
 	:number_of_heroes(_number_of_heroes), money(200){
@@ -32,7 +35,76 @@ public:
         for (int i=0; i < number_of_heroes; i++)
             heroes[i]->print();
     }
-
+	
+	IceSpell* useIceSpells(){
+		for(int i = 0; i < iceSpells.size(); i++){
+			cout << i + 1 << ")" << endl;
+			Spell* sp = iceSpells[i];
+			sp->print();
+			i++;
+		}
+		cout << "Choose the spell you want to use range from 1 to " << iceSpells.size() << " or 0 to cancel" << endl;
+		int spellOption;
+		cin >> spellOption;
+		if(spellOption > 0 && spellOption <= iceSpells.size()){
+			return iceSpells[spellOption - 1];
+		}
+		return NULL;		
+	}
+	
+	FireSpell* useFireSpells(){
+		for(int i = 0; i < fireSpells.size(); i++){
+			cout << i + 1 << ")" << endl;
+			Spell* sp = fireSpells[i];
+			sp->print();
+			i++;
+		}
+		cout << "Choose the spell you want to use range from 1 to " << iceSpells.size() << " or 0 to cancel" << endl;
+		int spellOption;
+		cin >> spellOption;
+		if(spellOption > 0 && spellOption <= fireSpells.size()){
+			return fireSpells[spellOption - 1];
+		}
+		return NULL;		
+	}
+	
+	LightingSpell* useLightSpells(){
+		for(int i = 0; i < lightSpells.size(); i++){
+			cout << i + 1 << ")" << endl;
+			Spell* sp = lightSpells[i];
+			sp->print();
+			i++;
+		}
+		cout << "Choose the spell you want to use range from 1 to " << lightSpells.size() << " or 0 to cancel" << endl;
+		int spellOption;
+		cin >> spellOption;
+		if(spellOption > 0 && spellOption <= lightSpells.size()){
+			return lightSpells[spellOption - 1];
+		}
+		return NULL;		
+	}
+	
+	void printArmors(){
+		for(int i = 0; i < armors.size(); i++){
+			Armor* ar = this->armors[i];
+			ar->print();
+		}
+	}
+	
+	void printWeapons(){
+		for(int i = 0; i < weapons.size(); i++){
+			Weapon* wp = this->weapons[i];
+			wp->print();
+		}
+	}
+	
+	void printPotions(){
+		for(int i = 0; i < potions.size(); i++){
+			Potion* pt = this->potions[i];
+			pt->print();
+		}
+	}
+	
 	void change_armor(int hero_index, int option){
 		if(armors.size() < option)
 			return;
@@ -74,10 +146,15 @@ public:
 		return this->heroes[i]->attack();
 	}
 	 
+	int attack(int i, Spell* sp){
+		return this->heroes[i]->attack(sp);	
+	} 
+	
 	void getAttacked(int attackPoints){
 		for(int i = 0; i < 3; i++){
 			if(!this->heroes[i]->isFaint()){
 				this->heroes[i]->getAttacked(attackPoints);
+				cout << " " << this->heroes[i]->getName() << endl;
 				return;
 			}
 		}
@@ -102,14 +179,60 @@ public:
 		return 0;	
 	}
 	
-	bool buy(Spell* sp){
+	bool buy(IceSpell* sp){
 		if(sp->getPrice() <= this->money){
 			this->money -= sp->getPrice();
-			this->spells.push_back(sp);
+			this->iceSpells.push_back(sp);
 			return 1;
 		}
 		return 0;
-	}	    
+	}
+	
+	bool buy(FireSpell* sp){
+		if(sp->getPrice() <= this->money){
+			this->money -= sp->getPrice();
+			this->fireSpells.push_back(sp);
+			return 1;
+		}
+		return 0;
+	}
+	
+	bool buy(LightingSpell* sp){
+		if(sp->getPrice() <= this->money){
+			this->money -= sp->getPrice();
+			this->lightSpells.push_back(sp);
+			return 1;
+		}
+		return 0;
+	}
+	
+	bool buy(Potion* pt){
+		if(pt->getPrice() <= this->money){
+			this->money -= pt->getPrice();
+			this->potions.push_back(pt);
+			return 1;
+		}
+		return 0;
+	}
+	
+	void update(){
+		for(int i = 0; i < 3; i++){
+			if(this->heroes[i] != NULL && !this->heroes[i]->isFaint()){
+				this->heroes[i]->update();
+			}
+		}
+	}
+	
+	int averageLevel(){
+		int avgLvl = 0;
+		for(int i = 0; i < 3; i++){
+			if(this->heroes[i] != NULL)
+				avgLvl += this->heroes[i]->getLevel();	
+		}
+		avgLvl = avgLvl / 3;
+		return avgLvl;
+	}
+		    
     friend class Battle;
 };
 
@@ -132,6 +255,7 @@ public:
     int get_monsters_num() const{
 		return number_of_monsters;
 	}
+	
     void print() const{
         for (int i=0; i < number_of_monsters; i++)
             monsters[i]->print();
@@ -139,6 +263,26 @@ public:
     
     void getAttacked(int num,int attack){
     	this->monsters[num]->getAttacked(attack);
+	}
+	
+	void getInfected(int num,FireSpell* sp){
+		this->monsters[num]->getInfected(sp);
+	}
+	
+	void getInfected(int num,IceSpell* sp){
+		this->monsters[num]->getInfected(sp);
+	}
+	
+	void getInfected(int num,LightingSpell* sp){
+		this->monsters[num]->getInfected(sp);
+	}
+	
+	void update(){
+		for(int i = 0; i < 6; i++){
+			if(this->monsters[i] != NULL && !this->monsters[i]->isFaint()){
+				this->monsters[i]->update();
+			}
+		}
 	}
     friend class Battle;
 };
@@ -151,8 +295,7 @@ private:
     monsters_squad* monsters;
     bool heroes_are_dead(){
         for(int i = 0; i < heroes->get_heroes_num(); i++){
-            if (heroes->heroes[i]->getcurrentHealth() != 0){
-            	heroes->heroes[i]->print();
+            if (heroes->heroes[i]->getcurrentHealth() > 0){
                 return false;
             }
         }
@@ -161,7 +304,7 @@ private:
     
 	bool monsters_are_dead(){
         for(int i = 0; i < monsters->get_monsters_num(); i++){
-            if (monsters->monsters[i]->getHealth() != 0){
+            if (monsters->monsters[i]->getcurrentHealth() > 0){
                 return false;
             }
         }
@@ -247,21 +390,51 @@ private:
 			
 		}else if(action == 2){	
 			// option 2: attack with spell
-			cout << "Select a spell to use:" << endl;
-			std::cout << "SPELL LIST:\n--------------------"<<std::endl;
-			for(int i = 0; i < this->heroes->spells.size(); i++){
-				Spell* sp = heroes->spells.at(i);
-               	cout << i + 1 << ")";
-				sp->print();
+			cout << "Select the type of spell you want to use (1)Ice Spell (2)Fire Spell (3)Lighting Spell" << endl;
+			int spellType = 4;
+			while(spellType > 3 || spellType < 0){
+				cin >> spellType ;
+				cout << "What spell would you like to use?(1)Ice Spell (2) Fire Spell (3) Lighting Spell" << endl;
 			}
-			int spell_index;
-			cin >> spell_index;
-			this->monsters->getAttacked();
-			// gregorh symplhrwse ta an ta katalabeis
-
-		}else if(action == 3){
-			// option 3: drink potion
-
+			if(spellType == 1){
+				IceSpell* sp = this->heroes->useIceSpells();
+				if(sp != NULL){
+					cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << endl;
+					int monster_index;
+					cin >> monster_index;
+					this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
+					this->monsters->getInfected(monster_index - 1, sp);
+				}
+			}
+			else if(spellType == 2){
+				FireSpell* sp = this->heroes->useFireSpells();
+				if(sp != NULL){
+					cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << endl;
+					int monster_index;
+					cin >> monster_index;
+					this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
+					this->monsters->getInfected(monster_index - 1, sp);
+				}
+			}
+			else{
+				LightingSpell* sp = this->heroes->useLightSpells();
+				if(sp != NULL){
+					cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << endl;
+					int monster_index;
+					cin >> monster_index;
+					this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
+					this->monsters->getInfected(monster_index - 1, sp);
+				}
+			}
+		}
+		else if(action == 3){
+			this->heroes->printPotions();
+			cout << "Select one of the above potions range 1 to " << this->heroes->potions.size() << " or type 0 to cancel." << endl;
+			int option;
+			cin >> option;
+			if(option > 0 && option <= this->heroes->potions.size() ){
+				this->heroes->heroes[hero_index - 1]->use_potion(this->heroes->potions[option - 1]);
+			} 
 
 		}
 	}
@@ -277,28 +450,40 @@ public:
     // actual battle
     bool battle(){  // the main function of the battle, everyhting happens in here
         //battle loop
+        cout << "NANI" << endl;
         for(int round = 1; (!heroes_are_dead() && !monsters_are_dead()); round++){
             
 			std::cout << "ROUND: " << round << std::endl;
+			cout << "======== HEROES =============" << endl;
+			for(int i = 0; i < this->heroes->number_of_heroes; i++)
+				if(!this->heroes->heroes[i]->isFaint())
+					this->heroes->heroes[i]->print();	
+			cout << "======== MONSTERS =============" << endl;
+			for(int i = 0; i < this->monsters->number_of_monsters; i++)
+				if(!this->monsters->monsters[i]->isFaint())
+					this->monsters->monsters[i]->print();	
 			heroes_change_armor();
 			heroes_change_weapon();
 			heroes_take_action();	// attack with spell, attack with weapon, use potion
 
             // pc's turn
             for (int i = 0; i < monsters->get_monsters_num(); i++){
-                if (monsters->monsters[i]->getHealth() != 0){
+                if (monsters->monsters[i]->getcurrentHealth() != 0){
                     // every monster does something if its not dead
                     // i will figure out later what
+                    cout << "Monster " << monsters->monsters[i]->getName() << " attacks ";
                     this->heroes->getAttacked(monsters->monsters[i]->attack());
                     break;
                 }
 				// also update everything
+				
             }
+			cout << "DEBUG UPDATES" << endl;
+			this->heroes->update();
+			this->monsters->update();
         }
         // end of battle
         return monsters_are_dead(); 
     }
-
-
 };
 
