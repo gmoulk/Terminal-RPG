@@ -12,6 +12,7 @@ using namespace std;
 int const max_weapons = 10;
 int const max_armors = 11;
 int const max_spells = 12;
+int const max_potions = 15;
 
 class market{
 	private:
@@ -28,7 +29,7 @@ class market{
 			int num_of_weapons = rand() % max_weapons;
 			int num_of_armors = rand() % max_armors;
 			int num_of_spells = rand() % max_spells;
-			//Max potions
+			int num_of_potions = rand() % max_potions;
 			for(int i = 0; i < num_of_weapons; i++){
 				ifstream in("weapons.txt");
 
@@ -52,22 +53,22 @@ class market{
     				in.getline(str, 255);  // delim defaults to '\n'
     				char* token1 = strtok(str,":");				
 						do{   	
-						if(j % 2==0){
-							if(j == 2){
-								name = string(token1);
-								cout << "[DEBUG] NAME " << name << endl;
-							}
-							else if(j == 4){
-								level = atoi(token1);
-								cout << "[DEBUG] LEVEL " << level << endl;
-							}
-								
-							else if(j == 6)
-								price = atof(token1);	
-							else if(j == 8)
-								damage = atof(token1);
-							else if(j == 10)
-								isTwoHanded = atoi(token1);				
+							if(j % 2==0){
+								if(j == 2){
+									name = string(token1);
+									cout << "[DEBUG] NAME " << name << endl;
+								}
+								else if(j == 4){
+									level = atoi(token1);
+									cout << "[DEBUG] LEVEL " << level << endl;
+								}
+									
+								else if(j == 6)
+									price = atof(token1);	
+								else if(j == 8)
+									damage = atof(token1);
+								else if(j == 10)
+									isTwoHanded = atoi(token1);				
 						}
 					j++;
 					token1 = strtok(NULL,"\n");
@@ -188,6 +189,50 @@ class market{
 					}						
   					in.close();				
 			}
+			
+			for(int i = 0; i < num_of_potions; i++){
+				ifstream in("potions.txt");
+				if(!in) {
+    				cout << "Cannot open input file.\n";
+    				exit(1);
+  				}
+
+  				char str[255];
+  				int spell_num = rand() % max_spells;
+				for (int i = 0 ; i < spell_num * 6 ; i++){ 
+    				in.ignore(255,'\n');
+    			}
+				int j = 1;
+				string name;
+				int level;
+				double price;		
+				double stat;
+				int class_;				
+  				while(in) {		 
+    				in.getline(str, 255);  // delim defaults to '\n'
+    				char* token1 = strtok(str,":");				
+						do{   	
+						if(j % 2==0){
+							if(j == 2)
+								name = string(token1);
+							else if(j == 4)
+								level = atoi(token1);
+							else if(j == 6)
+								price = atof(token1);	
+							else if(j == 8)
+								stat = atof(token1);
+							else if(j == 10)			
+								class_ = atoi(token1);			
+						}
+					j++;
+					token1 = strtok(NULL,"\n");
+					}while(token1 != NULL);
+					
+  				}
+					Potion* pt = new Potion(level,price,name,stat,class_);
+					potions.push_back(pt);					
+  					in.close();				
+			}
 			this->hs = hs;
 		}
 		
@@ -238,19 +283,28 @@ class market{
 			}
 		}
 		
+		void printPotion(){
+			cout << "======= POTIONS =======" << endl;
+			for(int i = 0; i < potions.size(); i++){
+				cout << i + 1 << ")" << endl;
+				Potion* pt = potions[i];
+				pt->print();
+			}
+		}
+		
 		void interact(){
 			cout << "Welcome to the store!" << endl;
 			cout << "Would you like to buy something?(1 = yes / 0 = no)" << endl;
 			bool i_want_to_buy;
 			cin >> i_want_to_buy;
 			while(i_want_to_buy){				
-				int buyOption = 4;
-				cout << "Would you like to buy a weapon(1), an armor(2), a spell(3) : " << endl;
-				while(buyOption > 3){
+				int buyOption = 5;
+				cout << "Would you like to buy a weapon(1), an armor(2), a spell(3), a potion(4) : " << endl;
+				while(buyOption > 4){
 					cin >> buyOption;
 					cout << "Would you like to buy a weapon(1), an armor(2), a spell(3) : " << endl;
 				}
-				if(buyOption == 1){
+				if(buyOption == 1 && this->weapons.size() != 0){
 					this->printWeapons();
 					cout << "What weapon would you like to buy?(type from range 1 to " << this->weapons.size() << " or 0 to cancel your action" << endl;
 					int weaponOption;
@@ -261,7 +315,7 @@ class market{
 						}
 					}
 				}
-				if(buyOption == 2){
+				else if(buyOption == 2 && this->armors.size() != 0){
 					this->printArmor();
 					cout << "What armor would you like to buy?(type from range 1 to " << this->armors.size() << " or 0 to cancel your action" << endl;
 					int armorOption;
@@ -272,7 +326,7 @@ class market{
 						}
 					}
 				}
-				if(buyOption == 3){
+				else if(buyOption == 3){
 					this->printSpells();
 					cout << "What spell would you like to buy?(1)Ice Spell (2) Fire Spell (3) Lighting Spell" << endl;
 					int spellType = 4;
@@ -281,12 +335,11 @@ class market{
 						cout << "What spell would you like to buy?(1)Ice Spell (2) Fire Spell (3) Lighting Spell" << endl;
 					}
 					int spellOption;
-					if(spellType == 1){
+					if(spellType == 1 && this->iceSpells.size() != 0){
 						for(int i = 0; i < iceSpells.size(); i++){
 							cout << i + 1 << ")" << endl;
 							Spell* sp = iceSpells[i];
 							sp->print();
-							i++;
 						}
 						cout << "Choose the spell you want to buy range from 1 to " << iceSpells.size() << " or 0 to cancel" << endl;
 						cin >> spellOption;
@@ -296,12 +349,11 @@ class market{
 							}
 						}
 					}
-					else if(spellType == 2){
+					else if(spellType == 2 && this->fireSpells.size() != 0){
 						for(int i = 0; i < fireSpells.size(); i++){
 							cout << i + 1 << ")" << endl;
-							Spell* sp = iceSpells[i];
+							Spell* sp = fireSpells[i];
 							sp->print();
-							i++;
 						}
 						cout << "Choose the spell you want to buy range from 1 to " << fireSpells.size() << " or 0 to cancel" << endl;
 						cin >> spellOption;
@@ -311,12 +363,11 @@ class market{
 							}
 						}
 					}
-					else{
+					else if(this->lightSpells.size() != 0){
 						for(int i = 0; i < lightSpells.size(); i++){
 							cout << i + 1 << ")" << endl;
-							Spell* sp = iceSpells[i];
+							Spell* sp = lightSpells[i];
 							sp->print();
-							i++;
 						}
 						cout << "Choose the spell you want to buy range from 1 to " << lightSpells.size() << " or 0 to cancel" << endl;
 						cin >> spellOption;
@@ -324,6 +375,17 @@ class market{
 							if(hs->buy(this->lightSpells[spellOption - 1])){
 								lightSpells.erase(lightSpells.begin() + spellOption - 1);
 							}
+						}
+					}
+				}
+				else if(buyOption == 4 && this->potions.size() != 0){
+					this->printPotion();
+					cout << "What potion would you like to buy?(type from range 1 to " << this->potions.size() << " or 0 to cancel your action" << endl;
+					int potionOption;
+					cin >> potionOption;
+					if(potionOption > 0){
+						if(hs->buy(this->potions[potionOption - 1])){
+							potions.erase(potions.begin() + potionOption - 1);
 						}
 					}
 				}

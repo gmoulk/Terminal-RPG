@@ -22,11 +22,12 @@ class Living{
 		virtual void print(){
 			cout << "Name: " << this->name << endl;
 			cout << "Level: " << this->level << endl;
+			cout << "HP: " << this->currentHealth << endl;
 			cout << "State: ";
 			if(faint == 0)
 				cout << "Currently In Good shape!" << endl;
 			else
-				cout << "Faint,He Is Currently Not Available!" << endl;	
+				cout << "Faint,He Is Currently Not Available!" << endl;		
 		}
 		
 		bool isFaint() const{
@@ -77,6 +78,10 @@ class Hero : public Living{
 		}
 		
 		int attack(Spell* spell_){
+			if(spell_->get_level() > this->level){
+				cout << "Spell level is greater than hero level!" << endl;
+				return 0;
+			}
 			int currentMagic = this->currentMagicPower - spell_->get_mana();
 			if(currentMagic >= 0){
 				int totalAttack;
@@ -104,6 +109,10 @@ class Hero : public Living{
 		}
 		
 		Item* equip(Armor* armToEquip){
+			if(armToEquip->getLevel() > this->level){
+				cout << "The level of " << armToEquip->getName() << " is greater than hero " << this->name << endl;
+				return armToEquip;
+			}
 			Item* temp = this->armInUse;
 			this->armInUse = armToEquip;
 			return temp;
@@ -111,6 +120,12 @@ class Hero : public Living{
 		
 		Item** equip(Weapon* wepToEquip){
 			Weapon** arrayOfWep = new Weapon*[2];
+			if(wepToEquip->getLevel() > this->level){
+				cout << "The level of " << wepToEquip->getName() << " is greater than hero " << this->name << endl;
+				arrayOfWep[0] = wepToEquip;
+				arrayOfWep[1] = NULL;
+				return (Item**) arrayOfWep;
+			}	
 			if((this->wpInUse1 != NULL && wepToEquip->numOfHands() == 1 ) || (this->wpInUse1 == NULL && this->wpInUse2 == NULL)){
 					arrayOfWep[0] = wpInUse1;
 					arrayOfWep[1] = NULL;
@@ -150,7 +165,6 @@ class Hero : public Living{
 		virtual void print(){
 			cout << "======== HERO STATS ============" << endl;
 			Living::print();
-			cout << "Current Health: " << this->currentHealth << endl;
 			cout << "Current Magic Power: " << this->currentMagicPower << endl;
 			cout << "Strength: " << this->strength << endl;
 			cout << "Dexterity: " << this->dexterity << endl;
@@ -170,8 +184,24 @@ class Hero : public Living{
 			return this->level;
 		}
 		
-		void use_potion(Potion* potion){ //  which to icnrease?
+		void getExperience(int numOfMonsters){
+			if(this->level < 1)
+				this->experience += 0,4*this->experience*numOfMonsters;
+			if(this->level < 4)
+				this->experience += 0,2*this->experience*numOfMonsters;
+			else
+				this->experience += 0,1*this->experience*numOfMonsters;
 			
+			if(this->experience >= this->experienceForLevelUp){
+				this->levelUp();
+			}		
+		}
+		
+		bool use_potion(Potion* potion){ //  which to icnrease?
+			if(potion->getLevel() > this->level){
+				cout << "Potion level is greater than hero level!" << endl;
+				return false;
+			}
 			int stat_to_increase = potion->get_stat_to_increase();
 			/* 			1 = strength		2 = dexterity		3 = agility			*/
 			if (stat_to_increase == 1){
@@ -181,13 +211,14 @@ class Hero : public Living{
 			}else if(stat_to_increase == 3){
 				std::cout << "Agility increased by " << potion->use(this->agility) << " points." << std::endl;
 			}
+			return true;
 			// after usage, potion must be deleted from inventory
 		}
 };
 
 class Warrior : public Hero{
 	public:
-		Warrior(string nameI) : Hero(nameI,100,80,4,1,3) {
+		Warrior(string nameI) : Hero(nameI,100,80,6,3,5) {
 		}
 		
 		void levelUp(){
@@ -208,7 +239,7 @@ class Warrior : public Hero{
 
 class Sorcerer : public Hero{
 	public:
-		Sorcerer(string nameI) : Hero(nameI,70,110,1,4,4) {
+		Sorcerer(string nameI) : Hero(nameI,70,110,3,6,6) {
 		}
 		void levelUp(){
 			cout << this->name << " has been leveled up!" << endl;
@@ -228,7 +259,7 @@ class Sorcerer : public Hero{
 
 class Paladin : public Hero{
 	public:
-		Paladin(string nameI) : Hero(nameI,90,95,3,3,1) {
+		Paladin(string nameI) : Hero(nameI,90,95,5,5,3) {
 		}
 		
 		void levelUp(){
@@ -303,7 +334,9 @@ class Monster : public Living{
 		virtual void print(){
 			cout << "======== MONSTER STATS ============" << endl;
 			Living::print();
-			cout << "Current Health: " << this->currentHealth << endl; 
+			cout << "Max Attack: " << this->attackMax << endl;
+			cout << "Min Attack: " << this->attackMin << endl;
+			cout << "Probability of dogde: " << this->probOfDogde << endl;
 		}
 		
 		bool getInfected(FireSpell* sp){

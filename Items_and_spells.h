@@ -31,6 +31,10 @@ public:
 	string getName() const{
 		return this->name;
 	}
+	
+	int getLevel() const{
+		return this->level_needed_to_use;
+	}
     // maybe virtual destructor
 };
 
@@ -188,6 +192,10 @@ public:
 	
 	double getPrice() const{
 		return this->price;
+	}
+	
+	int get_level() const{
+		return this->level_needed_to_use;
 	}
 	
 	virtual int getRed() = 0;
