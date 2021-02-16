@@ -30,7 +30,36 @@ class game{
 				cout << endl;
 			}
 		}
+
+		void create_terrain(){
+			srand((unsigned) time(NULL));
+			for(int i = 0; i < 10; i++){
+				for(int j = 0; j < 10; j++){
+					double randNum = ( (double)rand() / RAND_MAX);
+					if(randNum < 0.65)
+						access[i][j] = 0;	// common square(dont know if there are monsters)
+					else if(randNum < 0.9)
+						access[i][j] = 1;	// market
+					else 
+						access[i][j] = -1;	// not accesible
+				}
+			}
+			
+			for(int i = 0; i < 10; i++)
+				for(int j = 0; j < 10; j++)
+					if(access[i][j] == 0 || access[i][j] == 1){
+						this->x = i;
+						this->y = j;
+					}
+		}
 		
+
+		void create_tarrain_debug(){
+			
+
+		}
+
+
 		void move(){
 			while(1){
 				cout << "Where would you like to move (1) North (2) West (3) East (4) South (if you want to cancel just press 0)" << endl;	
@@ -86,9 +115,11 @@ class game{
 				}			
 			}
 		}
+
+		
 		
 		game(){
-			this->cs = NULL;
+			this->cs = NULL;    
 			this->mrk = NULL;
 			cout << "Select number of characters in your team:(from 1 to 3): ";	
 			Hero* team[3];
@@ -126,26 +157,10 @@ class game{
 				}
 				this->hs = new heroe_squad(team[0],team[1],team[2],numberOfCharacters);
 				
-				srand((unsigned) time(NULL));
-				for(int i = 0; i < 10; i++){
-					for(int j = 0; j < 10; j++){
-						double randNum = ( (double)rand() / RAND_MAX);
-						if(randNum < 0.65)
-							access[i][j] = 0;
-						else if(randNum < 0.9)
-							access[i][j] = 1;
-						else 
-							access[i][j] = -1;	
-					}
-				}
 				
-				for(int i = 0; i < 10; i++)
-					for(int j = 0; j < 10; j++)
-						if(access[i][j] == 0 || access[i][j] == 1){
-							this->x = i;
-							this->y = j;
-						}
+				create_terrain();
 				
+				// GAME LOOP
 				bool quit = false;
 				cout << "Welcome to Terminal RPG" << endl;
 				while(!quit){
@@ -154,8 +169,10 @@ class game{
 						delete this->cs;
 						this->cs = NULL;						
 					}
-					if(access[x][y] == 1 && this->mrk == NULL)
+					if(access[x][y] == 1 && this->mrk == NULL){
 						this->mrk = new marketSquare(this->hs);
+					}
+						
 					cout << "==============================" << endl;
 					cout << "Would you like to (1)Quit Game (2)Show Map (3)Check Inventoty (4)Change Armor (5)Change Weapon (6)Show Heroes ";
 					if(this->mrk != NULL)

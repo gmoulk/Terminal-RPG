@@ -105,42 +105,6 @@ public:
 		}
 	}
 	
-	void printIceSpells(){
-		for(int i  = 0; i < iceSpells.size(); i++){
-			IceSpell* is = this->iceSpells[i];
-			is->print();
-		}
-	}
-	
-	void printFireSpells(){
-		for(int i  = 0; i < fireSpells.size(); i++){
-			FireSpell* fs = this->fireSpells[i];
-			fs->print();
-		}
-	}
-	
-	void printLightingSpells(){
-		for(int i  = 0; i < lightSpells.size(); i++){
-			LightingSpell* ls = this->lightSpells[i];
-			ls->print();
-		}
-	}
-	
-	void checkInvetory(){
-		cout << "======= ARMORS ======" << endl;
-		this->printArmors();
-		cout << "======= WEAPONS ======" << endl;
-		this->printWeapons();
-		cout << "======= Potions =======" << endl;
-		this->printPotions();
-		cout << "======= ICE SPELLS =======" << endl;
-		this->printIceSpells();
-		cout << "======= FIRE SPELLS =======" << endl;
-		this->printFireSpells();
-		cout << "======= LIGHTING SPELLS =======" << endl;
-		this->printLightingSpells();	
-	}
-	
 	void change_armor(int hero_index, int option){
 		if(armors.size() < option)
 			return;
@@ -268,92 +232,7 @@ public:
 		avgLvl = avgLvl / 3;
 		return avgLvl;
 	}
-	
-	void battleLost(){
-		this->money = this->money / 2;
-	}
-	
-	void battleWon(int numOfMonsters){	
-			if(this->averageLevel() < 1)
-				this->money += 0.1*this->money*numOfMonsters;
-			if(this->averageLevel() < 3)
-				this->money += 0.2*this->money*numOfMonsters;	
-			else
-				this->money += 0.3*this->money*numOfMonsters;
-			for(int i = 0; i < numOfMonsters; i++)
-				this->heroes[i]->getExperience(numOfMonsters);
-	}
-
-
-	
-	void change_armor(){
-		// input
-		bool want_to_change = false;    
-        std::cout << "do you want to change a hero's armor?(1 = yes / 0 = no)" << std::endl;
-        std::cin >> want_to_change;
-		
-        while(want_to_change){
-			// validate if there ais any armor
-			if (armors.size() == 0){
-				std::cout << "You have no armor in your inventory" << std::endl;
-				return;
-			}
-			// input
-		    int hero_index;
-            std::cout << "Pick a hero(" << 1 << "-" << this->get_heroes_num() << ")" << std::endl;
-            std::cin >> hero_index;
-            std::cout << "Select the armor you want to equip: " << endl;
-            std::cout << "ARMOR LIST:\n--------------------"<<std::endl;
-			// print armor list
-			for(int i = 0; i < this->armors.size(); i++){
-              	Armor* arm = this->armors.at(i);
-               	cout << i + 1 << ")";
-				arm->print();
-			}
-			std::cout << "             \n--------------------"<<std::endl;
-			// input
-			int option;
-			cin >> option;
-			this->change_armor(hero_index, option);
-			cout << "Would you want to change something else?" << endl;
-			cin >> want_to_change;
-        }
-	}
-	
-
-
-	void change_weapon(){
-
-		bool want_to_change;
-		std::cout << "Do you want to change a hero's weapon?(1 = yes / 0 = no)" << std::endl;
-        std::cin >> want_to_change;
-	
-	    while(want_to_change){
-			if (weapons.size() == 0){
-				std::cout << "You have no weapon in your inventory" << std::endl;
-				return;
-			}
-			//input
-            int hero_index;
-            std::cout << "Pick a hero(" << 1 << "-" << this->get_heroes_num() << ")" << std::endl;
-            std::cin >> hero_index;
-            std::cout << "Select the weapon you want to equip: " << endl;
-			// print weapons
-			std::cout << "WEAPONS LIST:\n--------------------"<<std::endl;
-            for(int i = 0; i < this->weapons.size(); i++){
-               	Weapon* wep = this->weapons.at(i);
-               	cout << i + 1 << ")";
-				wep->print();
-			}
-			std::cout << "             \n--------------------"<<std::endl;
-			// input
-			int option;
-			cin >> option;
-			this->change_weapon(hero_index-1, option);
-			cout << "Would you want to change something else?" << endl;
-            cin >> want_to_change;
-        }
-	}	    
+		    
     friend class Battle;
 };
 
@@ -409,9 +288,6 @@ public:
 };
 
 
-
-
-
 class Battle{
 // battle takes place on a square on the grid(grid not made yet)
 private:
@@ -434,6 +310,66 @@ private:
         }
         return true;
     }
+
+	void heroes_change_armor(){
+		// input
+		bool want_to_change = false;    
+        std::cout << "do you want to change a hero's armor?(1 = yes / 0 = no)" << std::endl;
+        std::cin >> want_to_change;
+		
+        while(want_to_change){
+			// input
+		    int hero_index;
+            std::cout << "Pick a hero(" << 1 << "-" << heroes->get_heroes_num() << ")" << std::endl;
+            std::cin >> hero_index;
+            std::cout << "Select the armor you want to equip: " << endl;
+            std::cout << "ARMOR LIST:\n--------------------"<<std::endl;
+			// print armor list
+			for(int i = 0; i < heroes->armors.size(); i++){
+              	Armor* arm = heroes->armors.at(i);
+               	cout << i + 1 << ")";
+				arm->print();
+			}
+			std::cout << "             \n--------------------"<<std::endl;
+			// input
+			int option;
+			cin >> option;
+			heroes->change_armor(hero_index, option);
+			cout << "Would you want to change something else?" << endl;
+			cin >> want_to_change;
+        }
+	}
+
+
+	void heroes_change_weapon(){
+
+		bool want_to_change;
+		std::cout << "Do you want to change a hero's weapon?(1 = yes / 0 = no)" << std::endl;
+        std::cin >> want_to_change;
+      
+	    while(want_to_change){
+			//input
+            int hero_index;
+            std::cout << "Pick a hero(" << 1 << "-" << heroes->get_heroes_num() << ")" << std::endl;
+            std::cin >> hero_index;
+            std::cout << "Select the weapon you want to equip: " << endl;
+			// print weapons
+			std::cout << "WEAPONS LIST:\n--------------------"<<std::endl;
+            for(int i = 0; i < heroes->weapons.size(); i++){
+               	Weapon* wep = heroes->weapons.at(i);
+               	cout << i + 1 << ")";
+				wep->print();
+			}
+			std::cout << "             \n--------------------"<<std::endl;
+			// input
+			int option;
+			cin >> option;
+			heroes->change_weapon(hero_index-1, option);
+			cout << "Would you want to change something else?" << endl;
+            cin >> want_to_change;
+        }
+	}
+
 
 	void heroes_take_action(){
 		int hero_index, monster_index, action;
@@ -526,8 +462,8 @@ public:
 			for(int i = 0; i < this->monsters->number_of_monsters; i++)
 				if(!this->monsters->monsters[i]->isFaint())
 					this->monsters->monsters[i]->print();	
-			heroes->change_armor();
-			heroes->change_weapon();
+			heroes_change_armor();
+			heroes_change_weapon();
 			heroes_take_action();	// attack with spell, attack with weapon, use potion
 
             // pc's turn

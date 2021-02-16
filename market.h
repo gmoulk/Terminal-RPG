@@ -52,22 +52,22 @@ class market{
     				in.getline(str, 255);  // delim defaults to '\n'
     				char* token1 = strtok(str,":");				
 						do{   	
-							if(j % 2==0){
-								if(j == 2){
-									name = string(token1);
-									cout << "[DEBUG] NAME " << name << endl;
-								}
-								else if(j == 4){
-									level = atoi(token1);
-									cout << "[DEBUG] LEVEL " << level << endl;
-								}
-									
-								else if(j == 6)
-									price = atof(token1);	
-								else if(j == 8)
-									damage = atof(token1);
-								else if(j == 10)
-									isTwoHanded = atoi(token1);				
+						if(j % 2==0){
+							if(j == 2){
+								name = string(token1);
+								cout << "[DEBUG] NAME " << name << endl;
+							}
+							else if(j == 4){
+								level = atoi(token1);
+								cout << "[DEBUG] LEVEL " << level << endl;
+							}
+								
+							else if(j == 6)
+								price = atof(token1);	
+							else if(j == 8)
+								damage = atof(token1);
+							else if(j == 10)
+								isTwoHanded = atoi(token1);				
 						}
 					j++;
 					token1 = strtok(NULL,"\n");
