@@ -214,6 +214,11 @@ class Hero : public Living{
 			return true;
 			// after usage, potion must be deleted from inventory
 		}
+		
+		void revive(){
+			if(this->currentHealth == 0)
+				this->currentHealth = this->healthPower / 2;
+		}
 };
 
 class Warrior : public Hero{
@@ -224,7 +229,7 @@ class Warrior : public Hero{
 		void levelUp(){
 			cout << this->name << " has been leveled up!" << endl;
 			this->strength += 3;
-			this->agility += 2;
+			this->agility += 3;
 			this->dexterity += 1;
 			this->level++;
 			this->experience = this->experienceForLevelUp - this->experience;
@@ -244,7 +249,7 @@ class Sorcerer : public Hero{
 		void levelUp(){
 			cout << this->name << " has been leveled up!" << endl;
 			this->strength += 1;
-			this->agility += 2;
+			this->agility += 3;
 			this->dexterity += 3;
 			this->level++;
 			this->experience = this->experienceForLevelUp - this->experience;
@@ -266,7 +271,7 @@ class Paladin : public Hero{
 			cout << this->name << " has been leveled up!" << endl;
 			this->strength += 3;
 			this->agility += 1;
-			this->dexterity += 2;
+			this->dexterity += 3;
 			this->level++;
 			this->experience = this->experienceForLevelUp - this->experience;
 			this->experienceForLevelUp += 1.2 * this->level;
@@ -377,8 +382,12 @@ class Monster : public Living{
 					delete this->effect;	
 					this->effect = NULL;				
 				}
-			}	
+			}
+			this->currentHealth += 0.02 * this->currentHealth;
+			if(this->currentHealth > this->healthPower)
+				this->currentHealth = this->healthPower;
 		}
+		
 };
 
 class Dragon : public Monster{
@@ -408,7 +417,7 @@ class Exosceleton : public Monster{
 class  Spirit : public Monster{
 	public:
 		Spirit(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, double probOfDogdeI):
-			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.2 * level, probOfDogdeI + 0.08 * level) {
+			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.2 * level, probOfDogdeI + 0.1 * level) {
 			}
 	void print(){
 			Monster::print();

@@ -365,6 +365,23 @@ public:
 			cout << "Would you want to change something else?" << endl;
             cin >> want_to_change;
         }
+	}
+	
+	~heroe_squad(){
+		for(int i = 0; i < this->number_of_heroes; i++)
+			delete this->heroes[i];
+		for(int i = 0; i < this->armors.size(); i++)
+			delete armors[i];
+		for(int i = 0; i < this->weapons.size(); i++)
+			delete weapons[i];
+		for(int i = 0; i < this->potions.size(); i++)
+			delete potions[i];
+		for(int i = 0; i < this->fireSpells.size(); i++)
+			delete fireSpells[i];
+		for(int i = 0; i < this->iceSpells.size(); i++)
+			delete iceSpells[i];
+		for(int i = 0; i < this->lightSpells.size(); i++)
+			delete lightSpells[i];						
 	}	    
     friend class Battle;
 };
@@ -416,6 +433,10 @@ public:
 				this->monsters[i]->update();
 			}
 		}
+	}
+	~monsters_squad(){
+		for(int i = 0; i < this->number_of_monsters; i++)
+			delete monsters[i];
 	}
     friend class Battle;
 };
@@ -520,22 +541,29 @@ public:
     :heroes(heroes), monsters(monsters) {
         std::cout << "A battle is about to start!" << std::endl;
     }
-
+	
+	void displayStats(){
+		cout << "======== HEROES =============" << endl;
+		for(int i = 0; i < this->heroes->number_of_heroes; i++)
+			if(!this->heroes->heroes[i]->isFaint())
+				this->heroes->heroes[i]->print();	
+		cout << "======== MONSTERS =============" << endl;
+		for(int i = 0; i < this->monsters->number_of_monsters; i++)
+			if(!this->monsters->monsters[i]->isFaint())
+				this->monsters->monsters[i]->print();
+	}
+	
     // actual battle
     bool battle(){  // the main function of the battle, everyhting happens in here
         //battle loop
         cout << "NANI" << endl;
         for(int round = 1; (!heroes_are_dead() && !monsters_are_dead()); round++){
-            
 			std::cout << "ROUND: " << round << std::endl;
-			cout << "======== HEROES =============" << endl;
-			for(int i = 0; i < this->heroes->number_of_heroes; i++)
-				if(!this->heroes->heroes[i]->isFaint())
-					this->heroes->heroes[i]->print();	
-			cout << "======== MONSTERS =============" << endl;
-			for(int i = 0; i < this->monsters->number_of_monsters; i++)
-				if(!this->monsters->monsters[i]->isFaint())
-					this->monsters->monsters[i]->print();	
+			cout << "Would you like to print the stats of the battle participants?(1 = Yes/ 0 = No)" << endl;
+			bool printStats;
+			cin >> printStats;
+			if(printStats)
+				this->displayStats();
 			heroes->change_armor();
 			heroes->change_weapon();
 			heroes_take_action();	// attack with spell, attack with weapon, use potion
@@ -556,8 +584,14 @@ public:
 			this->heroes->update();
 			this->monsters->update();
         }
+        for(int i = 0; i < heroes->get_heroes_num(); i++)
+        	heroes->heroes[i]->revive();
         // end of battle
         return monsters_are_dead(); 
     }
+    
+    ~Battle(){
+    	delete this->monsters;
+	}
 };
 

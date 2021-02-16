@@ -295,9 +295,9 @@ class market{
 		void interact(){
 			cout << "Welcome to the store!" << endl;
 			cout << "Would you like to buy something?(1 = yes / 0 = no)" << endl;
-			bool i_want_to_buy;
-			cin >> i_want_to_buy;
-			while(i_want_to_buy){				
+			bool i_want_to_buy_sell;
+			cin >> i_want_to_buy_sell;
+			while(i_want_to_buy_sell){				
 				int buyOption = 5;
 				cout << "Would you like to buy a weapon(1), an armor(2), a spell(3), a potion(4) : " << endl;
 				while(buyOption > 4){
@@ -390,7 +390,20 @@ class market{
 					}
 				}
 				cout << "Would you like to buy something?(1 = yes / 0 = no)" << endl;
-				cin >> i_want_to_buy;
+				cin >> i_want_to_buy_sell;
 			}
+		}
+		
+		~market(){
+			for(int i = 0; i < armors.size(); i++)
+				delete armors[i];
+			for(int i = 0; i < weapons.size(); i++)
+				delete weapons[i];
+			for(int i = 0; i < iceSpells.size(); i++)
+				delete iceSpells[i];
+			for(int i = 0; i < fireSpells.size(); i++)
+				delete fireSpells[i];
+			for(int i = 0; i < lightSpells.size(); i++)
+				delete lightSpells[i];								
 		}
 };

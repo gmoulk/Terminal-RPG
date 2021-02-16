@@ -33,6 +33,9 @@ class marketSquare: public grid{
 		}
 		void interact(){
 			this->mrk->interact();
+		}
+		~marketSquare(){
+			delete mrk;
 		}	
 };
 
@@ -119,8 +122,7 @@ class commonSquare: public grid{
 				else{
 					hs->battleLost();
 				}
-				delete ms;	
-
+				delete bt;	
 			}else  // BATTLE WIL NOT HAPPEN
 				battleOpen = false;	 
 		}

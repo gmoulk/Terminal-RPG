@@ -207,5 +207,9 @@ class game{
 						this->cs = NULL;
 					}
 				}		
+		}
+		
+		~game(){
+			delete this->hs;
 		}	
 };
