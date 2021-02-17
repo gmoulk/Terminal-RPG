@@ -93,9 +93,12 @@ class Hero : public Living{
 		
 		void getAttacked(int attackPoints){
 			srand((unsigned int) time(NULL));
-			double dogde = (double)rand() / RAND_MAX;
-			if((0.02 * this->agility) > dogde)
+			int dogde = rand() % 100;
+			if((2 * this->agility) > dogde){
+				std::cout << "MONSTED DOGDED!" << std::endl;
 				return;
+			}
+				
 			int attackFinal = attackPoints;	
 			if(armInUse != NULL)	
 				attackFinal = attackPoints * this->armInUse->get_damage_percentage();
@@ -288,12 +291,12 @@ class Monster : public Living{
 		int attackMax;
 		int attackMin;
 		int deffence;
-		double probOfDogde;
+		int probOfDogde;  // at 100
 		Effect* effect;
 // 		only one effect per monster
 
 	public:
-		Monster(string nameI, int level, int healthPowerI, int attackMaxI, int attackMinI, int deffenceI ,double probOfDogdeI) :
+		Monster(string nameI, int level, int healthPowerI, int attackMaxI, int attackMinI, int deffenceI ,int probOfDogdeI) :
 			Living(nameI, healthPowerI + 0.1 * level,level), attackMax(attackMaxI), attackMin(attackMinI), deffence(deffenceI), probOfDogde(probOfDogdeI), effect(NULL){}  		
 		
 		int getcurrentHealth(){
@@ -314,10 +317,14 @@ class Monster : public Living{
 				cout << "Stop " << this->name << " is already faint!" << endl;
 				return;
 			}
+			// DOGDE
 			srand((unsigned int) time(NULL));
-			double dogde = (double)rand() / RAND_MAX;
-			if(dogde < probOfDogde)
+			int dogde =  rand() % 100;
+			if(dogde < probOfDogde){
+				std::cout << "MONSTER DOGDED!\n"; 
 				return;
+			}
+				
 			int finalAttack = attackPoints - deffence;
 			if(finalAttack <= 0)
 				finalAttack = 0;
@@ -344,11 +351,13 @@ class Monster : public Living{
 			cout << "Probability of dogde: " << this->probOfDogde << endl;
 		}
 		
+		// infection functions 
+
 		bool getInfected(FireSpell* sp){
 			srand((unsigned) time(NULL));
 			if(this->effect != NULL)
 				delete this->effect;
-			this->effect = new Fire_Effect(this->deffence,rand() % 5,sp->getRed());
+			this->effect = new Effect(this->deffence,rand() % 5,sp->getRed());
 			cout << "Infected by FireSpell!" << endl;
 			this->effect->apply_effect();
 		}
@@ -357,7 +366,7 @@ class Monster : public Living{
 			srand((unsigned) time(NULL));
 			if(this->effect != NULL)
 				delete this->effect;
-			this->effect = new Ice_Effect(this->attackMax,rand() % 5,sp->getRed());
+			this->effect = new Effect(this->attackMax,rand() % 5,sp->getRed());
 			this->effect->apply_effect(); 
 		}
 		
@@ -365,7 +374,7 @@ class Monster : public Living{
 			srand((unsigned) time(NULL));
 			if(this->effect != NULL)
 				delete this->effect;
-			this->effect = new Lighting_effect(this->probOfDogde,rand() % 5,sp->getRed());
+			this->effect = new Effect(this->probOfDogde,rand() % 5,sp->getRed());
 			this->effect->apply_effect(); 
 		}
 		
@@ -390,10 +399,12 @@ class Monster : public Living{
 		
 };
 
+// FIX PROBODDODGE
+
 class Dragon : public Monster{
 	public:
-		Dragon(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, double probOfDogdeI):
-			Monster(nameI, level, healthPowerI, attackMaxI + 1.9 * level, attackMinI + 1.9 * level, defenceI + 1.2 * level, probOfDogdeI + 0.05 * level) {			
+		Dragon(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, int probOfDogdeI):
+			Monster(nameI, level, healthPowerI, attackMaxI + 1.9 * level, attackMinI + 1.9 * level, defenceI + 1.2 * level, probOfDogdeI + (5 * level)) {			
 			}
 			
 		void print(){
@@ -404,8 +415,8 @@ class Dragon : public Monster{
 
 class Exosceleton : public Monster{
 	public:
-		Exosceleton(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, double probOfDogdeI):
-			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.9 * level, probOfDogdeI + 0.05 * level) {
+		Exosceleton(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, int probOfDogdeI):
+			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.9 * level, probOfDogdeI + (5 * level)) {
 			}
 			
 		void print(){
@@ -416,8 +427,8 @@ class Exosceleton : public Monster{
 
 class  Spirit : public Monster{
 	public:
-		Spirit(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, double probOfDogdeI):
-			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.2 * level, probOfDogdeI + 0.1 * level) {
+		Spirit(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, int probOfDogdeI):
+			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.2 * level, probOfDogdeI + (5 * level)) {
 			}
 	void print(){
 			Monster::print();

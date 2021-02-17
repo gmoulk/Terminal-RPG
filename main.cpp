@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Living.h"
+#include "living.h"
 #include "battle.h"
 #include "market.h"
 #include "game.h"

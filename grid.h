@@ -54,7 +54,7 @@ class commonSquare: public grid{
 			if((currentPersentage >= (this->persentageOfBattle)) && let_battle_happen){ // BATTLE WILL HAPPEN
 				battleOpen = true;
 				ifstream in("enemies.txt");	
-				this->averageLevel = hs->averageLevel();
+				this->averageLevel = hs->averageHeroLevel();
 				cout << "Ambush!Monsters attack us!" << endl;
 				// NUMBER OF MONSTERS HERE
 				int numberOfMonsters = 1;	
@@ -63,7 +63,7 @@ class commonSquare: public grid{
 				// FOR EVERY MONSTER
 				for(int i = 0; i < numberOfMonsters; i++){
 					// DETERMINE LEVEL OF MONSTER
-					int levelOfMonster = 0;
+					int levelOfMonster = 0;	// FIX THIS
 					cout << "LEVEL " << levelOfMonster << endl;
 					int typeOfMonster = 0;
 					in.clear();
@@ -84,7 +84,6 @@ class commonSquare: public grid{
 							if(j % 2==0){
 								if(j == 4){
 									name = string(token1);
-									cout << "NAME " << name << " " << j << endl;
 								}
 							else if(j == 6)
 								hp = atoi(token1);
@@ -95,7 +94,7 @@ class commonSquare: public grid{
 							else if(j == 12)
 								deffence = atoi(token1);
 							else if(j == 14)
-								probOfDogde = atof(token1);				
+								probOfDogde = atof(token1)*100;				
 							}
 							j++;
 							token1 = strtok(NULL,"\n");

@@ -121,13 +121,16 @@ class game{
 		game(){
 			this->cs = NULL;    
 			this->mrk = NULL;
-			cout << "Select number of characters in your team:(from 1 to 3): ";	
+			// initilize hereos
 			Hero* team[3];
-			for(int i = 0; i < 3; i++)
-				team[i] = NULL;
+			for(int i = 0; i < 3; i++)	team[i] = NULL;
+			// input for number of heroes
 			int numberOfCharacters = 10;
-			while(numberOfCharacters > 3 || numberOfCharacters <= 0)
-				cin >> numberOfCharacters;	
+			while(numberOfCharacters > 3 || numberOfCharacters <= 0){		// if not integer programm runs forever
+				cout << "Select number of characters in your team:(from 1 to 3): ";
+				cin >> numberOfCharacters;
+			}
+				
 			int option;
 			for(int i = 0; i < numberOfCharacters; i++){
 				cout << "Give the name of your hero: ";

@@ -172,7 +172,7 @@ public:
     int get_mana() const{
         return mana_to_consume;
     }
-    // will be implemented later
+  
     // actual type to return is not determined yet
     double damage_to_do(int dexterity){
 		srand((unsigned) time(NULL));
@@ -197,8 +197,7 @@ public:
 	int get_level() const{
 		return this->level_needed_to_use;
 	}
-	
-	virtual int getRed() = 0;
+	virtual ~Spell() = 0;
 };
 
 /* one extra effect that lasts for a number of rounds
@@ -262,31 +261,13 @@ public:
 class Effect{
 
 protected:
+    int initial_value;
+    int& value_to_reduce;
     int rounds_left;
     double percentage_reduction;
 public:
-    Effect(int rounds=3, double percentage=0.33)
-    :rounds_left(rounds), percentage_reduction(percentage){}
-
-    virtual bool update() = 0;
-    virtual void apply_effect() = 0;
-    virtual void debug() = 0;
-};
-
-
-class Fire_Effect: public Effect{
-
-protected:
-    int& value_to_reduce;
-    int initial_value;
-    
-public:
-    Fire_Effect(int& to_reduce, int rounds=3, double percentage=0.33)
-    :value_to_reduce(to_reduce),initial_value(to_reduce), Effect(rounds, percentage){}
-
-    void apply_effect(){
-        value_to_reduce = value_to_reduce - percentage_reduction*value_to_reduce;
-    }
+    Effect(int& to_reduce, int rounds=3, double percentage=0.33)
+    :initial_value(to_reduce), value_to_reduce(to_reduce), rounds_left(rounds), percentage_reduction(percentage){}
 
     bool update(){
         if (rounds_left == 0){
@@ -296,57 +277,12 @@ public:
         rounds_left--;
         return true;
     }
-    
+
+    void apply_effect(){
+         value_to_reduce = value_to_reduce - percentage_reduction*value_to_reduce;
+    }
+
     void debug(){
-    	cout << "{DEBUG} initial value: " << this->initial_value << " value to reduce " << this->value_to_reduce << endl;
-	}
-};
-
-
-class Ice_Effect:public Fire_Effect{
-public:
-    Ice_Effect(int& to_reduce, int rounds=3, double percentage=0.33)
-    :Fire_Effect( to_reduce,  rounds=3,  percentage=0.33){}
-    
-    bool update(){
-        if (rounds_left == 0){
-            value_to_reduce = initial_value;
-            return false;   // monster.effect = null
-        }
-        rounds_left--;
-        return true;
-    }
-    
-	void debug(){
-    	cout << "{DEBUG} initial value: " << this->initial_value << " value to reduce " << this->value_to_reduce << endl;
-	}
-};
-
-
-class Lighting_effect: public Effect{
-
-private:
-    double& value_to_reduce;
-    double& initial_value;
-    
-public:
-    Lighting_effect(double& to_reduce, int rounds=3, double percentage=0.33)
-    :value_to_reduce(to_reduce),initial_value(to_reduce),  Effect(rounds, percentage){}
-
-    void apply_effect(){
-        value_to_reduce -= percentage_reduction*value_to_reduce;
-    }
-
-    bool update(){
-        if (rounds_left == 0){
-            value_to_reduce = initial_value;
-            return false;   // monster.effect = null
-        }
-        rounds_left--;
-        return true;
-    }
-    
-     void debug(){
     	cout << "{DEBUG} initial value: " << this->initial_value << " value to reduce " << this->value_to_reduce << endl;
 	}
 };
