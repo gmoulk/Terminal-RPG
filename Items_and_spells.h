@@ -197,7 +197,8 @@ public:
 	int get_level() const{
 		return this->level_needed_to_use;
 	}
-	virtual ~Spell() = 0;
+	virtual ~Spell(){
+	}
 };
 
 /* one extra effect that lasts for a number of rounds
@@ -286,4 +287,3 @@ public:
     	cout << "{DEBUG} initial value: " << this->initial_value << " value to reduce " << this->value_to_reduce << endl;
 	}
 };
-

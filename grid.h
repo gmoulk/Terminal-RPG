@@ -1,10 +1,10 @@
 #pragma once
 #include <iostream>
+#include <fstream>
 #include <time.h>
 #include <stdlib.h>
 #include "market.h"
-
-
+#include <cstring>
 
 class grid{
 	protected:
@@ -54,7 +54,7 @@ class commonSquare: public grid{
 			if((currentPersentage >= (this->persentageOfBattle)) && let_battle_happen){ // BATTLE WILL HAPPEN
 				battleOpen = true;
 				ifstream in("enemies.txt");	
-				this->averageLevel = hs->averageHeroLevel();
+				this->averageLevel = hs->averageLevel();
 				cout << "Ambush!Monsters attack us!" << endl;
 				// NUMBER OF MONSTERS HERE
 				int numberOfMonsters = 1;	
@@ -121,7 +121,8 @@ class commonSquare: public grid{
 				else{
 					hs->battleLost();
 				}
-				delete bt;	
+				delete bt;
+				in.close();	
 			}else  // BATTLE WIL NOT HAPPEN
 				battleOpen = false;	 
 		}
