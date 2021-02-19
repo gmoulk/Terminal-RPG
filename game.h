@@ -11,8 +11,10 @@ class game{
 		int y;
 		int access[10][10];
 	public:
-		void displayMap(int x, int y,int access[10][10]);
+		void displayMap(int x, int y);
 
+		void make_heroes();
+		
 		void create_terrain();
 		
 		void move();
