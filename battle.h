@@ -143,7 +143,7 @@ public:
 		this->printArmors();
 		cout << "======= WEAPONS ======" << endl;
 		this->printWeapons();
-		cout << "======= POTIONS =======" << endl;
+		cout << "======= Potions =======" << endl;
 		this->printPotions();
 		cout << "======= ICE SPELLS =======" << endl;
 		this->printIceSpells();
@@ -207,8 +207,6 @@ public:
 			}
 		}
 	}
-
-	// BUY FUNCTIONS (1 PER ITEM THAT CAN BE BOUGHT)
 	
 	bool buy(Weapon* wep){
 		if(wep->getPrice() <= this->money){
@@ -265,6 +263,60 @@ public:
 		return 0;
 	}
 	
+	Weapon* sellWp(int i){
+		if(i <= 0 || i > this->weapons.size())
+			return NULL;
+		Weapon* wpToReturn = this->weapons[i - 1];
+		this->weapons.erase(weapons.begin() + i - 1);
+		this->money += wpToReturn->getPrice()/2;
+		return wpToReturn;	
+	}
+	
+	Armor* sellAr(int i){
+		if(i <= 0 || i > this->armors.size())
+			return NULL;
+		Armor* arToReturn = this->armors[i - 1];
+		this->armors.erase(armors.begin() + i - 1);
+		this->money += arToReturn->getPrice()/2;
+		return arToReturn;		
+	}
+	
+	Potion* sellPt(int i){
+		if(i <= 0 || i > this->potions.size())
+			return NULL;
+		Potion* ptToReturn = this->potions[i - 1];
+		this->potions.erase(potions.begin() + i - 1);
+		this->money += ptToReturn->getPrice()/2;
+		return ptToReturn;		
+	}
+	
+	IceSpell* sellIs(int i){
+		if(i <= 0 || i > this->iceSpells.size())
+			return NULL;
+		IceSpell* isToReturn = this->iceSpells[i - 1];
+		this->iceSpells.erase(iceSpells.begin() + i - 1);
+		this->money += isToReturn->getPrice()/2;
+		return isToReturn;		
+	}
+	
+	LightingSpell* sellLs(int i){
+		if(i <= 0 || i > this->lightSpells.size())
+			return NULL;
+		LightingSpell* lsToReturn = this->lightSpells[i - 1];
+		this->lightSpells.erase(lightSpells.begin() + i - 1);
+		this->money += lsToReturn->getPrice()/2;
+		return lsToReturn;		
+	}
+	
+	FireSpell* sellFs(int i){
+		if(i <= 0 || i > this->fireSpells.size())
+			return NULL;
+		FireSpell* fsToReturn = this->fireSpells[i - 1];
+		this->fireSpells.erase(fireSpells.begin() + i - 1);
+		this->money += fsToReturn->getPrice()/2;
+		return fsToReturn;		
+	}		
+	
 	void update(){
 		for(int i = 0; i < 3; i++){
 			if(this->heroes[i] != NULL && !this->heroes[i]->isFaint()){
@@ -273,25 +325,28 @@ public:
 		}
 	}
 	
-	int averageHeroLevel(){
+	int averageLevel(){
 		int avgLvl = 0;
 		for(int i = 0; i < 3; i++){
 			if(this->heroes[i] != NULL)
 				avgLvl += this->heroes[i]->getLevel();	
 		}
-		avgLvl = avgLvl / 3; // FIX THIS 
+		avgLvl = avgLvl / 3;
 		return avgLvl;
 	}
-
+	
+	int getMoney(){
+		return this->money;
+	}
 	
 	void battleLost(){
 		this->money = this->money / 2;
 	}
 	
 	void battleWon(int numOfMonsters){	
-			if(this->averageHeroLevel() < 1)
+			if(this->averageLevel() < 1)
 				this->money += 0.1*this->money*numOfMonsters;
-			if(this->averageHeroLevel() < 3)
+			if(this->averageLevel() < 3)
 				this->money += 0.2*this->money*numOfMonsters;	
 			else
 				this->money += 0.3*this->money*numOfMonsters;
@@ -308,7 +363,18 @@ public:
         std::cin >> want_to_change;
 		
         while(want_to_change){
-			// validate if there ais any armor
+			// validate if there is any armor
+			cout << "Would you like to take out your armor?(1 = Yes/ 0 = No)" << endl;
+			bool takeOut;
+			cin >> takeOut;
+			if(takeOut){
+				std::cout << "Pick a hero(" << 1 << "-" << this->get_heroes_num() << ")" << std::endl;
+				int hero_index;
+				cin >> hero_index;
+				Armor* arm = this->heroes[hero_index - 1]->takeOutArmor();
+				if(arm != NULL)
+					this->armors.push_back(arm);
+			}
 			if (armors.size() == 0){
 				std::cout << "You have no armor in your inventory" << std::endl;
 				return;
@@ -344,6 +410,20 @@ public:
         std::cin >> want_to_change;
 	
 	    while(want_to_change){
+	    	cout << "Would you like to take out your weapons?(1 = Yes/ 0 = No)" << endl;
+			bool takeOut;
+			cin >> takeOut;
+			if(takeOut){
+				std::cout << "Pick a hero(" << 1 << "-" << this->get_heroes_num() << ")" << std::endl;
+				int hero_index;
+				cin >> hero_index;
+				Weapon** wps = this->heroes[hero_index - 1]->takeOutWeapons();
+				if(wps[0] != NULL)
+					this->weapons.push_back(wps[0]);
+				if(wps[1] != NULL)
+					this->weapons.push_back(wps[1]);
+				delete[] wps;	
+			}
 			if (weapons.size() == 0){
 				std::cout << "You have no weapon in your inventory" << std::endl;
 				return;
@@ -400,9 +480,10 @@ private:
 public:
     monsters_squad(Monster* _monsters[6], int monsters_num)
 	:number_of_monsters(monsters_num){
-        for (int i=0; i < number_of_monsters; i++){
+		for(int i = 0; i < 6; i++)
+			monsters[i] = NULL;
+        for (int i=0; i < number_of_monsters; i++)
             monsters[i]  = _monsters[i];
-        }
     }
 
     int get_monsters_num() const{
@@ -418,17 +499,16 @@ public:
     	this->monsters[num]->getAttacked(attack);
 	}
 	
+	void getInfected(int num,FireSpell* sp){
+		this->monsters[num]->getInfected(sp);
+	}
 	
+	void getInfected(int num,IceSpell* sp){
+		this->monsters[num]->getInfected(sp);
+	}
 	
-	void getInfected(int index,Spell* sp){
-		// check type
-		if (dynamic_cast<FireSpell*>(sp)){
-			this->monsters[index]->getInfected((FireSpell *)sp);
-		}else if (dynamic_cast<IceSpell*>(sp)){
-			this->monsters[index]->getInfected((IceSpell *)sp);
-		}else{
-			this->monsters[index]->getInfected((LightingSpell *)sp);
-		}
+	void getInfected(int num,LightingSpell* sp){
+		this->monsters[num]->getInfected(sp);
 	}
 	
 	void update(){
@@ -475,20 +555,17 @@ private:
 	void heroes_take_action(){
 		int hero_index, monster_index, action;
 		// input
-		hero_index = -1;
-		while(hero_index < 1 || hero_index >> this->heroes->number_of_heroes ){
-			std::cout << "Select a hero for this turn to attack or consume a potion in range (1 - " << this->heroes->number_of_heroes << ")" << std::endl;
-        	std::cin >> hero_index;
-		}
-		
-        std::cout << "What would you want to do?(1)Normal attack 2)Spell Attack 3)Consume potion)" << endl;
-        std::cin >> action;
+		cout << "Select a hero for this turn to attack or consume a potion:" << endl;	
+		cin >> hero_index;
+		while(hero_index <= 0 || hero_index > this->heroes->number_of_heroes)
+			cin >> hero_index;
+        cout << "What would you want to do?1)Normal attack 2)Spell Attack 3)Consume potion)" << endl;
+        cin >> action;
 
         if(action == 1){
 			// option 1: attack with weapon
            	int attack = this->heroes->attack(hero_index-1);
-           	cout << "[ATTACK]" <<  endl;
-			cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << ")" <<  endl;
+			cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << endl;
 			int monster_index;
 			cin >> monster_index;
 			this->monsters->getAttacked(monster_index - 1, attack);
@@ -501,24 +578,38 @@ private:
 				cin >> spellType ;
 				cout << "What spell would you like to use?(1)Ice Spell (2) Fire Spell (3) Lighting Spell" << endl;
 			}
-			
-			Spell* sp;
 			if(spellType == 1){
-				sp = this->heroes->useIceSpells();
-			}else if(spellType == 2){
-				sp = this->heroes->useFireSpells();
-			}else{
-				sp = this->heroes->useLightSpells();
-			}
-			if(sp != NULL){
+				IceSpell* sp = this->heroes->useIceSpells();
+				if(sp != NULL){
 					cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << ")" << endl;
 					int monster_index;
 					cin >> monster_index;
 					this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
 					this->monsters->getInfected(monster_index - 1, sp);
+				}
 			}
-			
-		}else if (action == 3 && heroes->potions.size() != 0){
+			else if(spellType == 2){
+				FireSpell* sp = this->heroes->useFireSpells();
+				if(sp != NULL){
+					cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << ")" << endl;
+					int monster_index;
+					cin >> monster_index;
+					this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
+					this->monsters->getInfected(monster_index - 1, sp);
+				}
+			}
+			else{
+				LightingSpell* sp = this->heroes->useLightSpells();
+				if(sp != NULL){
+					cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << endl;
+					int monster_index;
+					cin >> monster_index;
+					this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
+					this->monsters->getInfected(monster_index - 1, sp);
+				}
+			}
+		}
+		else if(action == 3 && heroes->potions.size() != 0){
 			this->heroes->printPotions();
 			cout << "Select one of the above potions range 1 to " << this->heroes->potions.size() << " or type 0 to cancel." << endl;
 			int option;
@@ -550,16 +641,13 @@ public:
     // actual battle
     bool battle(){  // the main function of the battle, everyhting happens in here
         //battle loop
-        cout << "NANI" << endl;
         for(int round = 1; (!heroes_are_dead() && !monsters_are_dead()); round++){
 			std::cout << "ROUND: " << round << std::endl;
 			cout << "Would you like to print the stats of the battle participants?(1 = Yes/ 0 = No)" << endl;
 			bool printStats;
 			cin >> printStats;
-			if(printStats){
+			if(printStats)
 				this->displayStats();
-			}
-				
 			heroes->change_armor();
 			heroes->change_weapon();
 			heroes_take_action();	// attack with spell, attack with weapon, use potion
@@ -576,7 +664,6 @@ public:
 				// also update everything
 				
             }
-			cout << "DEBUG UPDATES" << endl;
 			this->heroes->update();
 			this->monsters->update();
         }

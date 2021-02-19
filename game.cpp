@@ -3,7 +3,7 @@
 #include "market.h"
 #include "grid.h"
 
-void game::displayMap(int x, int y){
+void game::displayMap(int x, int y, int access[10][10]){
 	cout << "=========== MAP ============" << endl;
 	for(int i = 0; i < 10; i++){
 		for(int j = 0; j < 10; j++){	
@@ -102,12 +102,16 @@ void game::move(){
 	}
 }
 
-void game::make_heroes(){
+game::game(){
+	this->cs = NULL;    
+	this->mrk = NULL;
 	cout << "Select number of characters in your team:(from 1 to 3): ";	
 	Hero* team[3];
-	for(int i = 0; i < 3; i++)	team[i] = NULL;
+	for(int i = 0; i < 3; i++)
+		team[i] = NULL;
 	int numberOfCharacters = 10;
-	while(numberOfCharacters > 3 || numberOfCharacters <= 0)	cin >> numberOfCharacters;	
+	while(numberOfCharacters > 3 || numberOfCharacters <= 0)
+		cin >> numberOfCharacters;	
 	int option;
 	for(int i = 0; i < numberOfCharacters; i++){
 		cout << "Give the name of your hero: ";
@@ -116,6 +120,8 @@ void game::make_heroes(){
 		getline(cin,name);
 		cout << "Select the class of your hero(1.Warrior 2.Sorcerer 3.Paladin):" << endl;
 		cin >> option;
+		while(option <= 0 || option > 3)
+			cin >> option;
 		bool legalOption = 0;
 		while(!legalOption)
 			switch(option){
@@ -136,23 +142,17 @@ void game::make_heroes(){
 			}
 	}
 	this->hs = new heroe_squad(team[0],team[1],team[2],numberOfCharacters);
-}
-
-game::game(){
-
-	this->cs = NULL;    
-	this->mrk = NULL;
-	make_heroes();
+					
 	create_terrain();
 				
 	// GAME LOOP
-	cout << "Welcome to Terminal RPG" << endl;
 	bool quit = false;
+	cout << "Welcome to Terminal RPG" << endl;
 	bool moved;
 	while(!quit){
 		moved = false;
 		if(access[x][y] == 0 && this->cs == NULL)
-			this->cs = new commonSquare(this->hs, rand()%2);						
+			this->cs = new commonSquare(this->hs);						
 		if(access[x][y] == 1 && this->mrk == NULL)
 			this->mrk = new marketSquare(this->hs);
 						
@@ -163,25 +163,25 @@ game::game(){
 		cout << " (8) Move" << endl;	
 		int option;
 		cin >> option;				
-		if(option == 2){
-			displayMap(x,y);
-		}else if(option == 3){
+		if(option == 2)
+			displayMap(x,y,access);
+		else if(option == 3)
 			hs->checkInvetory();
-		}else  if(option == 4){
+		else  if(option == 4)
 			hs->change_armor();
-		}else if(option == 5){
+		else if(option == 5)
 			hs->change_weapon();
-		}else if(option == 6){
+		else if(option == 6)
 			hs->print();
-		}else if(option == 7 && this->mrk != NULL){
+		else if(option == 7 && this->mrk != NULL)
 			this->mrk->interact();
-		}else if(option == 8){
+		else if(option == 8){
 			this->move();	
 			moved = true;
-		}else{
-			quit = true;
 		}
-			
+		else
+			quit = true;
+					
 		if(this->mrk != NULL && moved){
 			delete this->mrk;
 			this->mrk = NULL;

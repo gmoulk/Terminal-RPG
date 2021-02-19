@@ -82,6 +82,8 @@ market::market(heroe_squad* hs){
 	}
 			
 	for(int i = 0; i < num_of_armors; i++){
+		in2.clear();
+		in2.seekg(0);
   		char str[255];
   		int armor_num = rand() % max_armors;
 		for (int i = 0 ; i < armor_num * 5 ; i++){ 
@@ -97,10 +99,8 @@ market::market(heroe_squad* hs){
     		char* token1 = strtok(str,":");				
 			do{   	
 				if(j % 2==0){
-					if(j == 2){
+					if(j == 2)
 						name = string(token1);
-						cout << "DEBUG " << name << endl;
-					}
 					else if(j == 4)
 						level = atoi(token1);
 					else if(j == 6)
@@ -282,8 +282,8 @@ void market::interact(){
 	bool i_want_to_buy_sell;
 	cin >> i_want_to_buy_sell;
 	while(i_want_to_buy_sell){
-	/*	cout << "Your money: " << this->hs->getMoney() << endl; */
-		cout << "Would you like to buy(1) or sell(0)?(Warning with sell your items will be sold for half oh their initial price)" << endl;
+		cout << "Your money: " << this->hs->getMoney() << endl;
+		cout << "Would you like to buy(1) or sell(0)?(Warning with sell your items will be selled with half of their price)" << endl;
 		bool buy;
 		cin >> buy;
 		if(buy){		
@@ -379,7 +379,7 @@ void market::interact(){
 				}
 			}
 			
-		}/*
+		}
 		else{
 			cout << "What would you like to sell: (1)Weapons (2)Armors (3)Potions (4)Ice Spells (5)Lighting Spells (6)Fire Spells [Press 0 or something else than the options to cancel]" << endl;
 			int sellOption;
@@ -438,7 +438,7 @@ void market::interact(){
 				if(fs != NULL)
 					this->fireSpells.push_back(fs);			
 			}
-		}*/
+		}
 		cout << "Would you like to buy/sell something else?(1 = yes / 0 = no)" << endl;
 		cin >> i_want_to_buy_sell;
 	}

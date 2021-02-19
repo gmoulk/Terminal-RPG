@@ -63,6 +63,7 @@ public:
 		cout << " Price: " << this->price << endl;
 		cout << " Attack Points: " << this->damage << endl;
 		cout << " Number Of Hands Needed: " << this->is_two_handed + 1 << endl;
+		cout << " Level: " << this->level_needed_to_use << endl; 
 		cout << " Info: Weapon that increases "<< endl;
 		cout << "       your attack points    "<< endl;
 		cout << "========================" << endl;
@@ -97,6 +98,7 @@ public:
     	cout << " Name: "<< this->name << endl;
 		cout << " Price: " << this->price << endl;
 		cout << " Damage percentage absorbed: " << this->dmg_red_percentage << endl;
+		cout << " Level: " << this->level_needed_to_use << endl;
 		cout << " Info: Armor that arbsorbs "<< endl;
 		cout << "        enemy attack points "<< endl;
 		cout << "========================" << endl;
@@ -138,6 +140,7 @@ public:
     	cout << " Name: "<< this->name << endl;
 		cout << " Price: " << this->price << endl;
 		cout << " Statistic increase percentage: " << this->stat_increase_percentage << endl;
+		cout << " Level: " << this->level_needed_to_use << endl;
 		cout << " Info: Potion that increases one of "<< endl;
 		cout << "        your stats "<< endl;
 		cout << "========================" << endl;
@@ -177,7 +180,6 @@ public:
     double damage_to_do(int dexterity){
 		srand((unsigned) time(NULL));
 		int rand_num = rand() % dexterity;
-		cout << "DEBUG MAX DAMAGE IS " << rand_num % max_damage + least_damage << endl;
 		return rand_num % max_damage + least_damage;
 	}  // dexterity could be double but int is preffered
 	
@@ -187,6 +189,7 @@ public:
 		cout << " Mana: " << this->mana_to_consume << endl;
 		cout << " Max Damage: " << this->max_damage << endl;
 		cout << " Least Damage: " << this->least_damage << endl;
+		cout << " Level: " << this->level_needed_to_use << endl;
 		cout << "========================" << endl;
 	}
 	

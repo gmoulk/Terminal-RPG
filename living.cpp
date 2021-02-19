@@ -40,6 +40,7 @@ int Hero::attack(Spell* spell_){
 		this->currentMagicPower = currentMagic;
 		return totalAttack;
 	}
+	return 0;
 }
 
 void Hero::getAttacked(int attackPoints){
@@ -73,6 +74,8 @@ Item* Hero::equip(Armor* armToEquip){
 
 Item** Hero::equip(Weapon* wepToEquip){
 	Weapon** arrayOfWep = new Weapon*[2];
+	for(int i = 0; i < 2; i++)
+		arrayOfWep[i] = NULL;
 	if(wepToEquip->getLevel() > this->level){
 		cout << "The level of " << wepToEquip->getName() << " is greater than hero " << this->name << endl;
 		arrayOfWep[0] = wepToEquip;
@@ -113,6 +116,7 @@ Item** Hero::equip(Weapon* wepToEquip){
 		this->wpInUse2 = NULL; 
 		return (Item**) arrayOfWep;
 	}
+	return (Item**) arrayOfWep;
 }
 
 void Hero::print(){
@@ -230,7 +234,6 @@ int Monster::attack(){
 	if(attackMax <= 0)
 		return 0;
 	int attack = rand() % attackMax + attackMin;
-	cout << "MONSTER ATTACK IS " << attack << endl;
 	return attack;
 }
 
@@ -243,7 +246,7 @@ void Monster::getAttacked(int attackPoints){
 	srand((unsigned int) time(NULL));
 	int dogde =  rand() % 100;
 	if(dogde < probOfDogde){
-		std::cout << "MONSTER DOGDED!\n"; 
+		std::cout << "Monster Dogded!\n"; 
 		return;
 	}
 				
@@ -272,7 +275,7 @@ void Monster::getInfected(FireSpell* sp){
 	if(this->effect != NULL)
 		delete this->effect;
 	this->effect = new Effect(this->deffence,rand() % 5,sp->getRed());
-	cout << "Infected by FireSpell!" << endl;
+	cout << "Infected by Fire Spell!" << endl;
 	this->effect->apply_effect();
 }
 
