@@ -24,7 +24,6 @@ public:
         /* std::cout << "An item has been created\n"; */
     }
     virtual void print() = 0;
-    virtual int itemClass() = 0;
     double getPrice() const{
 		return this->price;
 	}
@@ -34,6 +33,9 @@ public:
 	
 	int getLevel() const{
 		return this->level_needed_to_use;
+	}
+	virtual ~Item(){
+		cout << "Item destroyed!" << endl;
 	}
     // maybe virtual destructor
 };
@@ -76,6 +78,9 @@ public:
 	int itemClass(){
 		return 1;
 	}
+	~Weapon(){
+		cout << "Weapon destroyed!" << endl;
+	}
 };
 
 
@@ -104,8 +109,8 @@ public:
 		cout << "========================" << endl;
 	}
 	
-	int itemClass(){
-		return 2;
+	~Armor(){
+		cout << "Armor destroyed!" << endl;
 	}
 };
 
@@ -146,8 +151,8 @@ public:
 		cout << "========================" << endl;
 	}
 	
-	int itemClass(){
-		return 3;
+	~Potion(){
+		cout << "Potion destroyed!" << endl;
 	}
 };
 
@@ -225,8 +230,13 @@ public:
 	}
     IceSpell(int level, int  mana, std::string name, double percentage , double price , int max_damage, int least_damage)
     :Spell(level, mana, name , price, max_damage, least_damage), dmg_reduction_percentage(percentage){ }
+	
 	int getRed(){
 		return dmg_reduction_percentage;
+	}
+
+	~IceSpell(){
+		cout << "Ice Spell destroyed!" << endl;
 	}
 };
 
@@ -244,6 +254,10 @@ public:
     int getRed(){
 		return enemy_defence_red_perc;
 	}
+
+	~FireSpell(){
+		cout << "Fire Spell destroyed!" << endl;
+	}
 };
 
 
@@ -255,10 +269,16 @@ public:
 		cout << "======== LIGHTING SPELL ========" << endl;
 		Spell::print();
 	}
+
     LightingSpell(int level, int  mana, std::string name, double percentage, double price, int max_damage, int least_damage)
     :Spell(level, mana, name, price, max_damage, least_damage), enemy_dodge_red_perc(percentage){}
+
     int getRed(){
 		return enemy_dodge_red_perc;
+	}
+
+	~LightingSpell(){
+		cout << "Lighting Spell destroyed!" << endl;
 	}
 };
 
@@ -286,6 +306,9 @@ public:
          value_to_reduce = value_to_reduce - percentage_reduction*value_to_reduce;
     }
 
+	~Effect(){
+		cout << "Effect destroyed!" << endl;
+	}
     void debug(){
     	cout << "{DEBUG} initial value: " << this->initial_value << " value to reduce " << this->value_to_reduce << endl;
 	}

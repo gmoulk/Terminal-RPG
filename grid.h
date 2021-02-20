@@ -47,7 +47,7 @@ class commonSquare: public square{
 		bool battleOpen;
 		monsters_squad* create_monsters_for_battle(heroe_squad* hs, int numberOfMonsters){
 			ifstream in("enemies.txt");	
-			this->averageLevel = hs->averageHeroLevel();
+			this->averageLevel = hs->averageLevel();
 			cout << "Ambush!Monsters attack us!" << endl;
 			Monster* mteam[numberOfMonsters];
 			char str[255];

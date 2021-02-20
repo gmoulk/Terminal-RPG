@@ -179,6 +179,10 @@ game::game(){
 			this->move();	
 			moved = true;
 		}else{
+			if(this->mrk != NULL)
+				delete this->mrk;
+			if(this->cs != NULL)
+				delete this->cs;	
 			quit = true;
 		}
 			

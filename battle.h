@@ -555,67 +555,67 @@ private:
 	void heroes_take_action(){
 		int hero_index, monster_index, action;
 		// input
-		cout << "Select a hero for this turn to attack or consume a potion:" << endl;	
-		cin >> hero_index;
-		while(hero_index <= 0 || hero_index > this->heroes->number_of_heroes)
-			cin >> hero_index;
-        cout << "What would you want to do?1)Normal attack 2)Spell Attack 3)Consume potion)" << endl;
-        cin >> action;
+		cout << "===== HERO TURN ====" << endl;
+		for(int i = 0; i < this->heroes->number_of_heroes; i++){
+			cout << this->heroes->heroes[i]->getName() << " turn" << endl;
+        	cout << "What would you want to do?1)Normal attack 2)Spell Attack 3)Consume potion)" << endl;
+        	cin >> action;
 
-        if(action == 1){
-			// option 1: attack with weapon
-           	int attack = this->heroes->attack(hero_index-1);
-			cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << endl;
-			int monster_index;
-			cin >> monster_index;
-			this->monsters->getAttacked(monster_index - 1, attack);
+       		if(action == 1){
+				// option 1: attack with weapon
+           		int attack = this->heroes->attack(hero_index-1);
+				cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << endl;
+				int monster_index;
+				cin >> monster_index;
+				this->monsters->getAttacked(monster_index - 1, attack);
 			
-		}else if(action == 2){	
-			// option 2: attack with spell
-			cout << "Select the type of spell you want to use (1)Ice Spell (2)Fire Spell (3)Lighting Spell" << endl;
-			int spellType = 4;
-			while(spellType > 3 || spellType < 0){
-				cin >> spellType ;
-				cout << "What spell would you like to use?(1)Ice Spell (2) Fire Spell (3) Lighting Spell" << endl;
-			}
-			if(spellType == 1){
-				IceSpell* sp = this->heroes->useIceSpells();
-				if(sp != NULL){
-					cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << ")" << endl;
-					int monster_index;
-					cin >> monster_index;
-					this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
-					this->monsters->getInfected(monster_index - 1, sp);
+			}else if(action == 2){	
+				// option 2: attack with spell
+				cout << "Select the type of spell you want to use (1)Ice Spell (2)Fire Spell (3)Lighting Spell" << endl;
+				int spellType = 4;
+				while(spellType > 3 || spellType < 0){
+					cin >> spellType ;
+					cout << "What spell would you like to use?(1)Ice Spell (2) Fire Spell (3) Lighting Spell" << endl;
+				}
+				if(spellType == 1){
+					IceSpell* sp = this->heroes->useIceSpells();
+					if(sp != NULL){
+						cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << ")" << endl;
+						int monster_index;
+						cin >> monster_index;
+						this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
+						this->monsters->getInfected(monster_index - 1, sp);
+					}
+				}
+				else if(spellType == 2){
+					FireSpell* sp = this->heroes->useFireSpells();
+					if(sp != NULL){
+						cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << ")" << endl;
+						int monster_index;
+						cin >> monster_index;
+						this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
+						this->monsters->getInfected(monster_index - 1, sp);
+					}	
+				}
+				else{
+					LightingSpell* sp = this->heroes->useLightSpells();
+					if(sp != NULL){
+						cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << endl;
+						int monster_index;
+						cin >> monster_index;
+						this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
+						this->monsters->getInfected(monster_index - 1, sp);
+					}
 				}
 			}
-			else if(spellType == 2){
-				FireSpell* sp = this->heroes->useFireSpells();
-				if(sp != NULL){
-					cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << ")" << endl;
-					int monster_index;
-					cin >> monster_index;
-					this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
-					this->monsters->getInfected(monster_index - 1, sp);
-				}
+			else if(action == 3 && heroes->potions.size() != 0){
+				this->heroes->printPotions();
+				cout << "Select one of the above potions range 1 to " << this->heroes->potions.size() << " or type 0 to cancel." << endl;
+				int option;
+				cin >> option;
+				if(option > 0 && option <= this->heroes->potions.size() && this->heroes->heroes[hero_index - 1]->use_potion(this->heroes->potions[option - 1]) )
+					heroes->potions.erase(heroes->potions.begin() + option - 1);
 			}
-			else{
-				LightingSpell* sp = this->heroes->useLightSpells();
-				if(sp != NULL){
-					cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << endl;
-					int monster_index;
-					cin >> monster_index;
-					this->monsters->getAttacked(monster_index - 1, heroes->attack(hero_index - 1,sp));
-					this->monsters->getInfected(monster_index - 1, sp);
-				}
-			}
-		}
-		else if(action == 3 && heroes->potions.size() != 0){
-			this->heroes->printPotions();
-			cout << "Select one of the above potions range 1 to " << this->heroes->potions.size() << " or type 0 to cancel." << endl;
-			int option;
-			cin >> option;
-			if(option > 0 && option <= this->heroes->potions.size() && this->heroes->heroes[hero_index - 1]->use_potion(this->heroes->potions[option - 1]) )
-				heroes->potions.erase(heroes->potions.begin() + option - 1);
 		}
 	}
 
@@ -655,11 +655,7 @@ public:
             // pc's turn
             for (int i = 0; i < monsters->get_monsters_num(); i++){
                 if (monsters->monsters[i]->getcurrentHealth() != 0){
-                    // every monster does something if its not dead
-                    // i will figure out later what
-                    cout << "Monster " << monsters->monsters[i]->getName() << " attacks ";
                     this->heroes->getAttacked(monsters->monsters[i]->attack());
-                    break;
                 }
 				// also update everything
 				

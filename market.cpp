@@ -139,8 +139,10 @@ market::market(heroe_squad* hs){
     		char* token1 = strtok(str,":");				
 			do{   	
 				if(j % 2==0){
-					if(j == 2)
+					if(j == 2){
 						class_ = string(token1);
+						cout << "DEBUG " << class_ << endl;
+					}
 					else if(j == 4)
 						name = string(token1);
 					else if(j == 6)
@@ -165,11 +167,11 @@ market::market(heroe_squad* hs){
 			FireSpell* sp = new FireSpell(level,mana,name,stat,price,damageM,damageL);
 			fireSpells.push_back(sp);
 		}
-		if(class_ == "IceSpell"){
+		else if(class_ == "IceSpell"){
 			IceSpell* sp = new IceSpell(level,mana,name,stat,price,damageM,damageL);
 			iceSpells.push_back(sp);
 		}
-		if(class_ == "LightingSpell"){
+		else{
 			LightingSpell* sp = new LightingSpell(level,mana,name,stat,price,damageM,damageL);
 			lightSpells.push_back(sp);
 		}										
@@ -250,19 +252,19 @@ void market::printSpells(){
 	cout << "==== ICE SPELLS ====" << endl;
 	for(int i = 0; i < iceSpells.size(); i++){
 		cout << i + 1 << ")" << endl;
-		Spell* sp = iceSpells[i];
+		IceSpell* sp = iceSpells[i];
 		sp->print();
 	}
 	cout << "==== FIRE SPELLS ====" << endl;
 	for(int i = 0; i < fireSpells.size(); i++){
 		cout << i + 1 << ")" << endl;
-		Spell* sp = fireSpells[i];
+		FireSpell* sp = fireSpells[i];
 		sp->print();
 	}
 	cout << "==== LIGHTING SPELLS ====" << endl;
 	for(int i = 0; i < lightSpells.size(); i++){
 		cout << i + 1 << ")" << endl;
-		Spell* sp = lightSpells[i];
+		LightingSpell* sp = lightSpells[i];
 		sp->print();
 	}
 }
@@ -454,5 +456,7 @@ market::~market(){
 	for(int i = 0; i < fireSpells.size(); i++)
 		delete fireSpells[i];
 	for(int i = 0; i < lightSpells.size(); i++)
-		delete lightSpells[i];								
+		delete lightSpells[i];
+	for(int i = 0; i < potions.size(); i++)
+		delete potions[i];									
 }

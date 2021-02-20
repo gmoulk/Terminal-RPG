@@ -179,7 +179,7 @@ class Monster : public Living{
 class Dragon : public Monster{
 	public:
 		Dragon(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, int probOfDogdeI):
-			Monster(nameI, level, healthPowerI, attackMaxI + 1.9 * level, attackMinI + 1.9 * level, defenceI + 1.2 * level, probOfDogdeI + (5 * level)) {			
+			Monster(nameI, level, healthPowerI, attackMaxI + 4 * level, attackMinI + 4 * level, defenceI + 2 * level, probOfDogdeI + (5 * level)) {			
 			}
 			
 		void print(){
@@ -191,7 +191,7 @@ class Dragon : public Monster{
 class Exosceleton : public Monster{
 	public:
 		Exosceleton(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, int probOfDogdeI):
-			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.9 * level, probOfDogdeI + (5 * level)) {
+			Monster(nameI, level, healthPowerI, attackMaxI + 2 * level, attackMinI + 2 * level, defenceI + 4 * level, probOfDogdeI + (5 * level)) {
 			}
 			
 		void print(){
@@ -203,7 +203,7 @@ class Exosceleton : public Monster{
 class  Spirit : public Monster{
 	public:
 		Spirit(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, int probOfDogdeI):
-			Monster(nameI, level, healthPowerI, attackMaxI + 1.2 * level, attackMinI + 1.2 * level, defenceI + 1.2 * level, probOfDogdeI + (5 * level)) {
+			Monster(nameI, level, healthPowerI, attackMaxI + 2 * level, attackMinI + 2 * level, defenceI + 2 * level, probOfDogdeI + (9 * level)) {
 			}
 	void print(){
 			Monster::print();
