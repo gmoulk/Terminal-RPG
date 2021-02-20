@@ -17,12 +17,6 @@ class square{
 		}	
 };
 
-class nonAccessible : public square{
-	public :
-		nonAccessible() : square(walkable) {}
-};
-
-
 class marketSquare: public square{
 	private:
 		market* mrk;
