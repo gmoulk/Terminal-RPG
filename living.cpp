@@ -139,11 +139,11 @@ void Hero::update(){
 
 void Hero::getExperience(int numOfMonsters){
 	if(this->level < 1)
-		this->experience += 0,4*this->experience*numOfMonsters;
+		this->experience += 0.4*this->experience*numOfMonsters;
 	if(this->level < 4)
-		this->experience += 0,2*this->experience*numOfMonsters;
+		this->experience += 0.2*this->experience*numOfMonsters;
 	else
-		this->experience += 0,1*this->experience*numOfMonsters;
+		this->experience += 0.1*this->experience*numOfMonsters;
 			
 	if(this->experience >= this->experienceForLevelUp)
 		this->levelUp();		
