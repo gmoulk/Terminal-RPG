@@ -137,17 +137,19 @@ void Hero::update(){
 		this->currentMagicPower = this->magicPower;
 }
 
+
 void Hero::getExperience(int numOfMonsters){
-	if(this->level < 1)
+	if(this->level < 1){
 		this->experience += 0,4*this->experience*numOfMonsters;
-	if(this->level < 4)
+	}else if(this->level < 4){
 		this->experience += 0,2*this->experience*numOfMonsters;
-	else
+	}else{
 		this->experience += 0,1*this->experience*numOfMonsters;
-			
-	if(this->experience >= this->experienceForLevelUp)
-		this->levelUp();		
+	}
+		
+	if(this->experience >= this->experienceForLevelUp)	this->levelUp();		
 }
+
 
 bool Hero::use_potion(Potion* potion){ //  which to icnrease?
 	if(potion->getLevel() > this->level){
@@ -199,34 +201,26 @@ Weapon** Hero::takeOutWeapons(){
 	return retWp;
 }
 
-void Warrior::levelUp(){
+void Hero::levelUp(int extra_strength, int extra_agility, int extra_dexterity){
 	cout << this->name << " has been leveled up!" << endl;
-	this->strength += 3;
-	this->agility += 3;
-	this->dexterity += 1;
-	this->level++;
+	this->strength	+= extra_strength;
+	this->agility 	+= extra_agility;
+	this->dexterity += extra_dexterity;
+	this->level 	+= 1;
 	this->experience = this->experienceForLevelUp - this->experience;
 	this->experienceForLevelUp += 1.2 * this->level;
+}
+
+void Warrior::levelUp(){
+	Hero::levelUp(3, 3, 1);
 }
 
 void Sorcerer::levelUp(){
-	cout << this->name << " has been leveled up!" << endl;
-	this->strength += 1;
-	this->agility += 3;
-	this->dexterity += 3;
-	this->level++;
-	this->experience = this->experienceForLevelUp - this->experience;
-	this->experienceForLevelUp += 1.2 * this->level;
+	Hero::levelUp(1, 3, 3);
 }
 
 void Paladin::levelUp(){
-	cout << this->name << " has been leveled up!" << endl;
-	this->strength += 3;
-	this->agility += 1;
-	this->dexterity += 3;
-	this->level++;
-	this->experience = this->experienceForLevelUp - this->experience;
-	this->experienceForLevelUp += 1.2 * this->level;
+	Hero::levelUp(3, 1, 3);
 }
 
 int Monster::attack(){

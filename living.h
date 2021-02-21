@@ -53,8 +53,9 @@ class Hero : public Living{
 		int getcurrentHealth(){
 			return this->currentHealth;
 		}
-		
 		virtual void levelUp() = 0;
+		
+		virtual void levelUp(int extra_strength, int extra_agility, int extra_dexterity);
 		
 		int attack();
 		

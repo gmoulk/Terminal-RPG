@@ -1,7 +1,7 @@
 #include "game.h"
 #include "battle.h"
 #include "market.h"
-#include "grid.h"
+#include "square.h"
 
 void game::displayMap(int x, int y){
 	cout << "=========== MAP ============" << endl;

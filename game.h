@@ -1,6 +1,6 @@
 #include "battle.h"
 #include "market.h"
-#include "grid.h"
+#include "square.h"
 
 class game{
 	private:
