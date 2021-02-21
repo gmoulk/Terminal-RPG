@@ -278,18 +278,9 @@ void market::printPotion(){
 	}
 }
 
-void market::interact(){
-	cout << "Welcome to the store!" << endl;
-	cout << "Would you like to buy something?(1 = yes / 0 = no)" << endl;
-	bool i_want_to_buy_sell;
-	cin >> i_want_to_buy_sell;
-	while(i_want_to_buy_sell){
-		cout << "Your money: " << this->hs->getMoney() << endl;
-		cout << "Would you like to buy(1) or sell(0)?(Warning with sell your items will be selled with half of their price)" << endl;
-		bool buy;
-		cin >> buy;
-		if(buy){		
-			int buyOption = 5;
+
+void market::buy(){
+	int buyOption = 5;
 			cout << "Would you like to buy a weapon(1), an armor(2), a spell(3), a potion(4) : " << endl;
 			while(buyOption > 4){
 				cin >> buyOption;
@@ -381,9 +372,10 @@ void market::interact(){
 				}
 			}
 			
-		}
-		else{
-			cout << "What would you like to sell: (1)Weapons (2)Armors (3)Potions (4)Ice Spells (5)Lighting Spells (6)Fire Spells [Press 0 or something else than the options to cancel]" << endl;
+}
+
+void market::sell(){
+	cout << "What would you like to sell: (1)Weapons (2)Armors (3)Potions (4)Ice Spells (5)Lighting Spells (6)Fire Spells [Press 0 or something else than the options to cancel]" << endl;
 			int sellOption;
 			cin >> sellOption;
 			if(sellOption == 1){
@@ -440,6 +432,23 @@ void market::interact(){
 				if(fs != NULL)
 					this->fireSpells.push_back(fs);			
 			}
+}
+
+
+void market::interact(){
+	cout << "Welcome to the store!" << endl;
+	cout << "Would you like to buy something?(1 = yes / 0 = no)" << endl;
+	bool i_want_to_buy_sell;
+	cin >> i_want_to_buy_sell;
+	while(i_want_to_buy_sell){
+		cout << "Your money: " << this->hs->getMoney() << endl;
+		cout << "Would you like to buy(1) or sell(0)?(Warning with sell your items will be selled with half of their price)" << endl;
+		bool buy;
+		cin >> buy;
+		if(buy){		
+			this->buy();
+		}else{
+			this->sell();
 		}
 		cout << "Would you like to buy/sell something else?(1 = yes / 0 = no)" << endl;
 		cin >> i_want_to_buy_sell;

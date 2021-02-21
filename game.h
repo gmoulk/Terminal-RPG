@@ -7,10 +7,11 @@ class game{
 		heroe_squad* hs;
 		commonSquare* cs;
 		marketSquare* mrk;
+		
 		int x;
 		int y;
 		int access[10][10];
-	public:
+
 		void displayMap(int x, int y);
 
 		void make_heroes();
@@ -18,7 +19,9 @@ class game{
 		void create_terrain();
 		
 		void move();
-			
+
+	public:
+		
 		game();
 		
 		~game(){

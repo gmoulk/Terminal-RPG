@@ -6,7 +6,7 @@
 #include "Items_and_spells.h"
 using namespace std;
 
-void Living::print(){
+void Living::print() const{
 	cout << "Name: " << this->name << endl;
 	cout << "Level: " << this->level << endl;
 	cout << "HP: " << this->currentHealth << endl;
@@ -262,13 +262,15 @@ void Monster::getAttacked(int attackPoints){
 	cout << "Current health of " << this->name << " is " << this->currentHealth << endl;
 }
 
-void Monster::print(){
+void Monster::print() const{
 	cout << "======== MONSTER STATS ============" << endl;
 	Living::print();
 	cout << "Max Attack: " << this->attackMax << endl;
 	cout << "Min Attack: " << this->attackMin << endl;
 	cout << "Probability of dogde: " << this->probOfDogde << endl;
 }
+
+
 
 void Monster::getInfected(FireSpell* sp){
 	srand((unsigned) time(NULL));
@@ -294,6 +296,8 @@ void Monster::getInfected(LightingSpell* sp){
 	this->effect = new Effect(this->probOfDogde,rand() % 5,sp->getRed());
 	this->effect->apply_effect(); 
 }
+
+
 
 void Monster::update(){
 	this->currentHealth += 0.02 * this->currentHealth;

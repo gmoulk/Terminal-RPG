@@ -19,22 +19,8 @@ private:
 	vector<FireSpell*> fireSpells;
 	vector<LightingSpell*> lightSpells;
 	vector<Potion*> potions;
-public:
-	heroe_squad(Hero* hero1, Hero* hero2=NULL, Hero* hero3=NULL, int _number_of_heroes = 1)
-	:number_of_heroes(_number_of_heroes), money(200){
-		heroes[0] = hero1;
-		heroes[1] = hero2;
-		heroes[2] = hero3;
-	}
-	
-	int get_heroes_num() const{
-		return number_of_heroes;
-	}
-	
-    void print() const{
-        for (int i=0; i < number_of_heroes; i++)
-            heroes[i]->print();
-    }
+
+
 	
 	IceSpell* useIceSpells(){
 		if(this->iceSpells.size() == 0){
@@ -95,7 +81,105 @@ public:
 		}
 		return NULL;		
 	}
+
+	// inventory functions
 	
+	
+	void change_armor(int hero_index, int option){
+		if(armors.size() < option)
+			return;
+		armors[option - 1] = (Armor*) heroes[hero_index - 1]->equip(armors[option - 1]);
+		if(armors[option - 1] == NULL){
+			armors.erase(armors.begin() + option - 1);
+		}
+		for(int i = 0; i < armors.size(); i++){
+		if(armors[i] == NULL && (i != 19 || armors[i + 1] != NULL)){
+			Armor* temp = armors[i];
+			armors[i] = armors[i + 1];
+			armors[i + 1] = temp;
+			}
+		}
+	}
+	
+	void change_weapon(int hero_index, int option){
+		if(weapons.size() < option)
+			return;
+		Weapon* w1 = weapons.at(option - 1);
+		w1->print();
+		Weapon** weaps = (Weapon**) heroes[hero_index]->equip(w1);
+		weapons[option - 1] = weaps[0];
+		if(weapons[option - 1] == NULL)
+			weapons.erase(weapons.begin() + option - 1); 
+		for(int i = 0; i < weapons.size(); i++){
+		if(armors[i] == NULL && (i != 19 || armors[i + 1] != NULL)){
+			Weapon* temp = weapons[i];
+			weapons[i] = weapons[i + 1];
+			weapons[i + 1] = temp;
+			}
+		}
+		if(weaps[1] != NULL)
+			weapons.push_back(weaps[1]);
+		delete[] weaps;	
+	}
+	
+	
+	int attack(int i){
+		return this->heroes[i]->attack();
+	}
+	 
+	int attack(int i, Spell* sp){
+		return this->heroes[i]->attack(sp);	
+	} 
+	
+	void getAttacked(int attackPoints){
+		for(int i = 0; i < 3; i++){
+			if(!this->heroes[i]->isFaint()){
+				this->heroes[i]->getAttacked(attackPoints);
+				cout << " " << this->heroes[i]->getName() << endl;
+				return;
+			}
+		}
+	}
+
+
+ public:
+	heroe_squad(Hero* hero1, Hero* hero2=NULL, Hero* hero3=NULL, int _number_of_heroes = 1)
+	:number_of_heroes(_number_of_heroes), money(200){
+		heroes[0] = hero1;
+		heroes[1] = hero2;
+		heroes[2] = hero3;
+	}
+	~heroe_squad(){
+		for(int i = 0; i < this->number_of_heroes; i++)
+			delete this->heroes[i];
+		for(int i = 0; i < this->armors.size(); i++)
+			delete armors[i];
+		for(int i = 0; i < this->weapons.size(); i++)
+			delete weapons[i];
+		for(int i = 0; i < this->potions.size(); i++)
+			delete potions[i];
+		for(int i = 0; i < this->fireSpells.size(); i++)
+			delete fireSpells[i];
+		for(int i = 0; i < this->iceSpells.size(); i++)
+			delete iceSpells[i];
+		for(int i = 0; i < this->lightSpells.size(); i++)
+			delete lightSpells[i];						
+	}	    
+
+
+	int get_heroes_num() const{
+		return number_of_heroes;
+	}
+
+	
+	// print functions
+	
+    void print() const{
+        for (int i=0; i < number_of_heroes; i++)
+            heroes[i]->print();
+    }
+
+
 	void printArmors(){
 		for(int i = 0; i < armors.size(); i++){
 			Armor* ar = this->armors[i];
@@ -138,6 +222,7 @@ public:
 		}
 	}
 	
+
 	void checkInvetory(){
 		cout << "======= ARMORS ======" << endl;
 		this->printArmors();
@@ -152,61 +237,12 @@ public:
 		cout << "======= LIGHTING SPELLS =======" << endl;
 		this->printLightingSpells();	
 	}
+
+
 	
-	void change_armor(int hero_index, int option){
-		if(armors.size() < option)
-			return;
-		armors[option - 1] = (Armor*) heroes[hero_index - 1]->equip(armors[option - 1]);
-		if(armors[option - 1] == NULL){
-			armors.erase(armors.begin() + option - 1);
-		}
-		for(int i = 0; i < armors.size(); i++){
-		if(armors[i] == NULL && (i != 19 || armors[i + 1] != NULL)){
-			Armor* temp = armors[i];
-			armors[i] = armors[i + 1];
-			armors[i + 1] = temp;
-			}
-		}
-	}
-	
-	void change_weapon(int hero_index, int option){
-		if(weapons.size() < option)
-			return;
-		Weapon* w1 = weapons.at(option - 1);
-		w1->print();
-		Weapon** weaps = (Weapon**) heroes[hero_index]->equip(w1);
-		weapons[option - 1] = weaps[0];
-		if(weapons[option - 1] == NULL)
-			weapons.erase(weapons.begin() + option - 1); 
-		for(int i = 0; i < weapons.size(); i++){
-		if(armors[i] == NULL && (i != 19 || armors[i + 1] != NULL)){
-			Weapon* temp = weapons[i];
-			weapons[i] = weapons[i + 1];
-			weapons[i + 1] = temp;
-			}
-		}
-		if(weaps[1] != NULL)
-			weapons.push_back(weaps[1]);
-		delete[] weaps;	
-	}
-	
-	int attack(int i){
-		return this->heroes[i]->attack();
-	}
-	 
-	int attack(int i, Spell* sp){
-		return this->heroes[i]->attack(sp);	
-	} 
-	
-	void getAttacked(int attackPoints){
-		for(int i = 0; i < 3; i++){
-			if(!this->heroes[i]->isFaint()){
-				this->heroes[i]->getAttacked(attackPoints);
-				cout << " " << this->heroes[i]->getName() << endl;
-				return;
-			}
-		}
-	}
+
+
+	// buy functions
 	
 	bool buy(Weapon* wep){
 		if(wep->getPrice() <= this->money){
@@ -263,6 +299,8 @@ public:
 		return 0;
 	}
 	
+	// sell functions
+
 	Weapon* sellWp(int i){
 		if(i <= 0 || i > this->weapons.size())
 			return NULL;
@@ -336,9 +374,10 @@ public:
 	}
 	
 	int getMoney(){
-		return this->money;
+		return money;
 	}
 	
+	// NEED NAME FIX 
 	void battleLost(){
 		this->money = this->money / 2;
 	}
@@ -450,22 +489,7 @@ public:
         }
 	}
 	
-	~heroe_squad(){
-		for(int i = 0; i < this->number_of_heroes; i++)
-			delete this->heroes[i];
-		for(int i = 0; i < this->armors.size(); i++)
-			delete armors[i];
-		for(int i = 0; i < this->weapons.size(); i++)
-			delete weapons[i];
-		for(int i = 0; i < this->potions.size(); i++)
-			delete potions[i];
-		for(int i = 0; i < this->fireSpells.size(); i++)
-			delete fireSpells[i];
-		for(int i = 0; i < this->iceSpells.size(); i++)
-			delete iceSpells[i];
-		for(int i = 0; i < this->lightSpells.size(); i++)
-			delete lightSpells[i];						
-	}	    
+	
     friend class Battle;
 };
 
@@ -477,24 +501,7 @@ class monsters_squad{
 private:
     int number_of_monsters;
     Monster* monsters[6];
-public:
-    monsters_squad(Monster* _monsters[6], int monsters_num)
-	:number_of_monsters(monsters_num){
-		for(int i = 0; i < 6; i++)
-			monsters[i] = NULL;
-        for (int i=0; i < number_of_monsters; i++)
-            monsters[i]  = _monsters[i];
-    }
-
-    int get_monsters_num() const{
-		return number_of_monsters;
-	}
-	
-    void print() const{
-        for (int i=0; i < number_of_monsters; i++)
-            monsters[i]->print();
-    }
-    
+	 
     void getAttacked(int num,int attack){
     	this->monsters[num]->getAttacked(attack);
 	}
@@ -518,6 +525,25 @@ public:
 			}
 		}
 	}
+
+public:
+    monsters_squad(Monster* _monsters[6], int monsters_num)
+	:number_of_monsters(monsters_num){
+		for(int i = 0; i < 6; i++)
+			monsters[i] = NULL;
+        for (int i=0; i < number_of_monsters; i++)
+            monsters[i]  = _monsters[i];
+    }
+
+    int get_monsters_num() const{
+		return number_of_monsters;
+	}
+	
+    void print() const{
+        for (int i=0; i < number_of_monsters; i++)
+            monsters[i]->print();
+    }
+   
 	~monsters_squad(){
 		for(int i = 0; i < this->number_of_monsters; i++)
 			delete monsters[i];
@@ -627,7 +653,7 @@ public:
         std::cout << "A battle is about to start!" << std::endl;
     }
 	
-	void displayStats(){
+	void displayStats() const{
 		cout << "======== HEROES =============" << endl;
 		for(int i = 0; i < this->heroes->number_of_heroes; i++)
 			if(!this->heroes->heroes[i]->isFaint())
@@ -638,6 +664,7 @@ public:
 				this->monsters->monsters[i]->print();
 	}
 	
+
     // actual battle
     bool battle(){  // the main function of the battle, everyhting happens in here
         //battle loop
@@ -646,8 +673,9 @@ public:
 			cout << "Would you like to print the stats of the battle participants?(1 = Yes/ 0 = No)" << endl;
 			bool printStats;
 			cin >> printStats;
-			if(printStats)
+			if(printStats){
 				this->displayStats();
+			}	
 			heroes->change_armor();
 			heroes->change_weapon();
 			heroes_take_action();	// attack with spell, attack with weapon, use potion
@@ -657,8 +685,6 @@ public:
                 if (monsters->monsters[i]->getcurrentHealth() != 0){
                     this->heroes->getAttacked(monsters->monsters[i]->attack());
                 }
-				// also update everything
-				
             }
 			this->heroes->update();
 			this->monsters->update();

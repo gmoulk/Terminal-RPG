@@ -13,6 +13,9 @@ class market{
 		vector<LightingSpell*> lightSpells;
 		vector<Potion*> potions;
 		heroe_squad* hs;
+		void buy();
+		void sell();
+		
 	public:
 		market(heroe_squad* hs);
 		
@@ -26,7 +29,7 @@ class market{
 		
 		void printPotion();
 		
-		void interact();
+		void interact();	// NOTE: SPLIT TO INTERACT BUY AND SELL
 		
 		~market();
 };

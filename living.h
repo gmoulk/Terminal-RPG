@@ -9,9 +9,9 @@ using namespace std;
 class Living{
 	protected:
 		string name;
+		bool faint;
 		int level;
 		int healthPower;
-		bool faint;
 		int currentHealth;
 	public:
 		Living(string nameI,int healthPowerI, int levelI) : name(nameI), healthPower(healthPowerI), level(levelI), faint(0) , currentHealth(healthPower) {}	
@@ -20,7 +20,7 @@ class Living{
 			return this->name;
 		}
 		
-		virtual void print();
+		virtual void print() const;
 		
 		bool isFaint() const{
 			return this->faint;
@@ -47,10 +47,8 @@ class Hero : public Living{
 		
 	public:
 		Hero(string nameI, int healthPowerI,int magicPowerI, int strengthI, int dexterityI, int agilityI) : Living(nameI,healthPowerI,0) , 
-			magicPower(magicPowerI), currentMagicPower(magicPowerI),strength(strengthI), dexterity(dexterityI), agility(agilityI), experience(0), experienceForLevelUp(30), numOfItems(0), currentHealth(healthPowerI), armInUse(NULL) {
-				wpInUse1 = NULL;
-				wpInUse2 = NULL;
-			}
+			magicPower(magicPowerI), currentMagicPower(magicPowerI),strength(strengthI), dexterity(dexterityI), agility(agilityI), experience(0),
+			experienceForLevelUp(30), numOfItems(0), currentHealth(healthPowerI), armInUse(NULL), wpInUse1(NULL), wpInUse2(NULL) {}
 		
 		int getcurrentHealth(){
 			return this->currentHealth;
@@ -88,9 +86,9 @@ class Hero : public Living{
 		bool use_potion(Potion* potion);
 		
 		void revive(){
-			if(this->currentHealth == 0)
-				this->currentHealth = this->healthPower / 2;
+			if(currentHealth == 0)	currentHealth = healthPower / 2;
 		}
+
 		~Hero(){
 			if(this->armInUse != NULL)
 				delete armInUse;
@@ -161,7 +159,7 @@ class Monster : public Living{
 		
 		void getAttacked(int attackPoints);
 		
-		virtual void print();
+		virtual void print() const;
 		
 		// infection functions 
 
@@ -182,7 +180,7 @@ class Dragon : public Monster{
 			Monster(nameI, level, healthPowerI, attackMaxI + 4 * level, attackMinI + 4 * level, defenceI + 2 * level, probOfDogdeI + (5 * level)) {			
 			}
 			
-		void print(){
+		void print() const{
 			Monster::print();
 			cout << "Class: Dragon" << endl;
 		}	
@@ -194,7 +192,7 @@ class Exosceleton : public Monster{
 			Monster(nameI, level, healthPowerI, attackMaxI + 2 * level, attackMinI + 2 * level, defenceI + 4 * level, probOfDogdeI + (5 * level)) {
 			}
 			
-		void print(){
+		void print() const{
 			Monster::print();
 			cout << "Class: Exosceleton" << endl;
 		}	
@@ -205,7 +203,7 @@ class  Spirit : public Monster{
 		Spirit(string nameI, int level, int healthPowerI,int attackMaxI, int attackMinI, int defenceI, int probOfDogdeI):
 			Monster(nameI, level, healthPowerI, attackMaxI + 2 * level, attackMinI + 2 * level, defenceI + 2 * level, probOfDogdeI + (9 * level)) {
 			}
-	void print(){
+	void print() const{
 			Monster::print();
 			cout << "Class: Spirit" << endl;
 		}		
