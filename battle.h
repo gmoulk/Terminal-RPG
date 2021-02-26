@@ -1,128 +1,90 @@
 #pragma once
+#include <iostream>
 #include "living.h"
 #include "Items_and_spells.h"
 #include <string>
 #include <vector>
 
-
+using namespace std;
 // Maybe some implmentations will change
 // for the easiest implementaiton of battle
+
+enum{ ice,   fire,   lighting};
+enum{ armor, weapon, potion  };
+
 class heroe_squad{
 
 private:
 	int number_of_heroes;
 	Hero* heroes[3];
-	int money;
-	vector<Armor*> armors;
-	vector<Weapon*> weapons;
-	vector<IceSpell*> iceSpells;
-	vector<FireSpell*> fireSpells;
-	vector<LightingSpell*> lightSpells;
-	vector<Potion*> potions;
-
-
 	
-	IceSpell* useIceSpells(){
-		if(this->iceSpells.size() == 0){
-			cout << "No Ice Spells available" << endl;
+
+    // INVENTORY
+    int money;
+    // ITEMS
+    vector<Item*> items[3];
+    vector<Spell*> spells[3];
+
+	// vector<Armor*> armors;
+	// vector<Weapon*> weapons;
+    // vector<Potion*> potions;
+    // SPELLS
+	// vector<IceSpell*> iceSpells;
+	// vector<FireSpell*> fireSpells;
+	// vector<LightingSpell*> lightSpells;
+	
+
+	// added now
+	Spell* useSpells(int type){
+		if(this->spells[type].size() == 0){
+			std::cout << "No Spells available" << endl;
 			return NULL;
 		}
-		for(int i = 0; i < iceSpells.size(); i++){
-			cout << i + 1 << ")" << endl;
-			Spell* sp = iceSpells[i];
+		for(int i = 0; i < spells[type].size(); i++){
+			std::cout << i + 1 << ")" << endl;
+			Spell* sp = spells[type][i];
 			sp->print();
 			i++;
 		}
-		cout << "Choose the spell you want to use range from 1 to " << iceSpells.size() << " or 0 to cancel" << endl;
+		std::cout << "Choose the spell you want to use range from 1 to " << spells[type].size() << " or 0 to cancel" << endl;
 		int spellOption;
-		cin >> spellOption;
-		if(spellOption > 0 && spellOption <= iceSpells.size()){
-			return iceSpells[spellOption - 1];
+		std::cin >> spellOption;
+		if(spellOption > 0 && spellOption <= spells[type].size()){
+			return spells[type][spellOption - 1];
 		}
-		return NULL;		
-	}
-	
-	FireSpell* useFireSpells(){
-		if(this->fireSpells.size() == 0){
-			cout << "No Fire Spells available" << endl;
-			return NULL;
-		}
-		for(int i = 0; i < fireSpells.size(); i++){
-			cout << i + 1 << ")" << endl;
-			Spell* sp = fireSpells[i];
-			sp->print();
-			i++;
-		}
-		cout << "Choose the spell you want to use range from 1 to " << iceSpells.size() << " or 0 to cancel" << endl;
-		int spellOption;
-		cin >> spellOption;
-		if(spellOption > 0 && spellOption <= fireSpells.size()){
-			return fireSpells[spellOption - 1];
-		}
-		return NULL;		
-	}
-	
-	LightingSpell* useLightSpells(){
-		if(this->lightSpells.size() == 0){
-			cout << "No Lighting Spells available" << endl;
-			return NULL;
-		}
-		for(int i = 0; i < lightSpells.size(); i++){
-			cout << i + 1 << ")" << endl;
-			Spell* sp = lightSpells[i];
-			sp->print();
-			i++;
-		}
-		cout << "Choose the spell you want to use range from 1 to " << lightSpells.size() << " or 0 to cancel" << endl;
-		int spellOption;
-		cin >> spellOption;
-		if(spellOption > 0 && spellOption <= lightSpells.size()){
-			return lightSpells[spellOption - 1];
-		}
-		return NULL;		
+		return NULL;
 	}
 
+
+	IceSpell* useIceSpells(){  return dynamic_cast<IceSpell*>(useSpells(ice));	}
+	FireSpell* useFireSpells(){	return dynamic_cast<FireSpell*>(useSpells(fire)); }
+	LightingSpell* useLightSpells(){	return dynamic_cast<LightingSpell*>(useSpells(lighting)); }
+	
 	// inventory functions
 	
-	
 	void change_armor(int hero_index, int option){
-		if(armors.size() < option)
-			return;
+		if(armors.size() < option)	return;
 		armors[option - 1] = (Armor*) heroes[hero_index - 1]->equip(armors[option - 1]);
 		if(armors[option - 1] == NULL){
 			armors.erase(armors.begin() + option - 1);
 		}
-		for(int i = 0; i < armors.size(); i++){
-		if(armors[i] == NULL && (i != 19 || armors[i + 1] != NULL)){
-			Armor* temp = armors[i];
-			armors[i] = armors[i + 1];
-			armors[i + 1] = temp;
-			}
-		}
 	}
 	
 	void change_weapon(int hero_index, int option){
-		if(weapons.size() < option)
-			return;
+		if(weapons.size() < option)	return;
 		Weapon* w1 = weapons.at(option - 1);
 		w1->print();
 		Weapon** weaps = (Weapon**) heroes[hero_index]->equip(w1);
 		weapons[option - 1] = weaps[0];
 		if(weapons[option - 1] == NULL)
 			weapons.erase(weapons.begin() + option - 1); 
-		for(int i = 0; i < weapons.size(); i++){
-		if(armors[i] == NULL && (i != 19 || armors[i + 1] != NULL)){
-			Weapon* temp = weapons[i];
-			weapons[i] = weapons[i + 1];
-			weapons[i + 1] = temp;
-			}
-		}
 		if(weaps[1] != NULL)
 			weapons.push_back(weaps[1]);
 		delete[] weaps;	
 	}
 	
-	
+	// attack function
+
 	int attack(int i){
 		return this->heroes[i]->attack();
 	}
@@ -143,12 +105,14 @@ private:
 
 
  public:
+
 	heroe_squad(Hero* hero1, Hero* hero2=NULL, Hero* hero3=NULL, int _number_of_heroes = 1)
 	:number_of_heroes(_number_of_heroes), money(200){
 		heroes[0] = hero1;
 		heroes[1] = hero2;
 		heroes[2] = hero3;
 	}
+
 	~heroe_squad(){
 		for(int i = 0; i < this->number_of_heroes; i++)
 			delete this->heroes[i];
@@ -167,61 +131,38 @@ private:
 	}	    
 
 
-	int get_heroes_num() const{
-		return number_of_heroes;
-	}
+	int get_heroes_num() const{	return number_of_heroes; }
 
-	
 	// print functions
 	
     void print() const{
-        for (int i=0; i < number_of_heroes; i++)
-            heroes[i]->print();
+        for (int i=0; i < number_of_heroes; i++)  heroes[i]->print();
     }
 
 
-	void printArmors(){
-		for(int i = 0; i < armors.size(); i++){
-			Armor* ar = this->armors[i];
-			ar->print();
-		}
-	}
+    void print_items(int type){
+        for(int i = 0; i < items[type].size(); i++){
+            items[type][i]->print();
+        }
+    }
+
+	void printArmors()  {print_items(armor);}
+	void printWeapons() {print_items(weapon);}
+	void printPotions() {print_items(potion);}
 	
-	void printWeapons(){
-		for(int i = 0; i < weapons.size(); i++){
-			Weapon* wp = this->weapons[i];
-			wp->print();
-		}
-	}
+
+
+	void print_spells(int type){
+        for(int i = 0; i < spells[type].size(); i++){
+            spells[type][i]->print();
+        }
+    }
+
+	void printIceSpells() 		{ print_spells(ice);	 }
+	void printFireSpells() 		{ print_spells(fire);	 }
+	void printLightingSpells()	{ print_spells(lighting);}
 	
-	void printPotions(){
-		for(int i = 0; i < potions.size(); i++){
-			Potion* pt = this->potions[i];
-			pt->print();
-		}
-	}
-	
-	void printIceSpells(){
-		for(int i  = 0; i < iceSpells.size(); i++){
-			IceSpell* is = this->iceSpells[i];
-			is->print();
-		}
-	}
-	
-	void printFireSpells(){
-		for(int i  = 0; i < fireSpells.size(); i++){
-			FireSpell* fs = this->fireSpells[i];
-			fs->print();
-		}
-	}
-	
-	void printLightingSpells(){
-		for(int i  = 0; i < lightSpells.size(); i++){
-			LightingSpell* ls = this->lightSpells[i];
-			ls->print();
-		}
-	}
-	
+
 
 	void checkInvetory(){
 		cout << "======= ARMORS ======" << endl;
@@ -237,124 +178,70 @@ private:
 		cout << "======= LIGHTING SPELLS =======" << endl;
 		this->printLightingSpells();	
 	}
-
-
-	
-
-
+    
 	// buy functions
 	
-	bool buy(Weapon* wep){
-		if(wep->getPrice() <= this->money){
-			this->money -= wep->getPrice();
-			this->weapons.push_back(wep);
-			cout << "Weapon " << wep->getName() << " bought!" << endl;
+    bool buy(Item* item, int type){
+        if (item->getPrice() <= this->money){
+            this->money -= item->getPrice();
+			this->items[type].push_back(item);
 			return 1;
-		}
-		return 0;
-	}
+        }
+        return 0;
+    }
+
+    bool buy(Weapon* arm)	{	return buy(arm, weapon);	}
+	bool buy(Armor* arm)	{	return buy(arm, armor);		}
+	bool buy(Potion* arm)	{	return buy(arm, potion);	}
 	
-	bool buy(Armor* arm){
-		if(arm->getPrice() <= this->money){
-			this->money -= arm->getPrice();
-			this->armors.push_back(arm);
-			return 1;
-		}
-		return 0;	
-	}
-	
-	bool buy(IceSpell* sp){
-		if(sp->getPrice() <= this->money){
+
+
+    bool buySpell(Spell* sp, int type){
+        if(sp->getPrice() <= this->money){
 			this->money -= sp->getPrice();
-			this->iceSpells.push_back(sp);
+			this->spells[type].push_back(sp);
 			return 1;
 		}
-		return 0;
-	}
+    }
 	
-	bool buy(FireSpell* sp){
-		if(sp->getPrice() <= this->money){
-			this->money -= sp->getPrice();
-			this->fireSpells.push_back(sp);
-			return 1;
-		}
-		return 0;
-	}
-	
-	bool buy(LightingSpell* sp){
-		if(sp->getPrice() <= this->money){
-			this->money -= sp->getPrice();
-			this->lightSpells.push_back(sp);
-			return 1;
-		}
-		return 0;
-	}
-	
-	bool buy(Potion* pt){
-		if(pt->getPrice() <= this->money){
-			this->money -= pt->getPrice();
-			this->potions.push_back(pt);
-			return 1;
-		}
-		return 0;
-	}
+	bool buy(IceSpell* sp)		{	return buySpell(sp, ice);		 }
+	bool buy(FireSpell* sp)		{	return buySpell(sp, fire);		 }
+	bool buy(LightingSpell* sp)	{	return buySpell(sp, lighting);	 }
+
 	
 	// sell functions
+	Item* sellItem(int i, int type){
+		
+		if(i <= 0 || i > this->items[type].size())
+			return NULL;
+		Item* toReturn = this->items[type][i - 1];
+		this->items[type].erase(items[type].begin() + i - 1);
+		this->money += toReturn->getPrice()/2;
+		return toReturn;	
+	}
 
-	Weapon* sellWp(int i){
-		if(i <= 0 || i > this->weapons.size())
+
+	Weapon* sellWp(int i){	return dynamic_cast<Weapon*> (sellItem(i, weapon));	}
+	Armor*  sellAr(int i){	return dynamic_cast<Armor*>  (sellItem(i, armor));	}
+	Potion* sellPt(int i){	return dynamic_cast<Potion*> (sellItem(i, potion));	}
+	
+
+
+	Spell* sellSpell(int i, int type){
+		if(i <= 0 || i > this->spells[type].size())
 			return NULL;
-		Weapon* wpToReturn = this->weapons[i - 1];
-		this->weapons.erase(weapons.begin() + i - 1);
-		this->money += wpToReturn->getPrice()/2;
-		return wpToReturn;	
+		Spell* toReturn = this->spells[type][i - 1];
+		this->spells[type].erase(spells[type].begin() + i - 1);
+		this->money += toReturn->getPrice()/2;
+		return toReturn;
 	}
 	
-	Armor* sellAr(int i){
-		if(i <= 0 || i > this->armors.size())
-			return NULL;
-		Armor* arToReturn = this->armors[i - 1];
-		this->armors.erase(armors.begin() + i - 1);
-		this->money += arToReturn->getPrice()/2;
-		return arToReturn;		
-	}
-	
-	Potion* sellPt(int i){
-		if(i <= 0 || i > this->potions.size())
-			return NULL;
-		Potion* ptToReturn = this->potions[i - 1];
-		this->potions.erase(potions.begin() + i - 1);
-		this->money += ptToReturn->getPrice()/2;
-		return ptToReturn;		
-	}
-	
-	IceSpell* sellIs(int i){
-		if(i <= 0 || i > this->iceSpells.size())
-			return NULL;
-		IceSpell* isToReturn = this->iceSpells[i - 1];
-		this->iceSpells.erase(iceSpells.begin() + i - 1);
-		this->money += isToReturn->getPrice()/2;
-		return isToReturn;		
-	}
-	
-	LightingSpell* sellLs(int i){
-		if(i <= 0 || i > this->lightSpells.size())
-			return NULL;
-		LightingSpell* lsToReturn = this->lightSpells[i - 1];
-		this->lightSpells.erase(lightSpells.begin() + i - 1);
-		this->money += lsToReturn->getPrice()/2;
-		return lsToReturn;		
-	}
-	
-	FireSpell* sellFs(int i){
-		if(i <= 0 || i > this->fireSpells.size())
-			return NULL;
-		FireSpell* fsToReturn = this->fireSpells[i - 1];
-		this->fireSpells.erase(fireSpells.begin() + i - 1);
-		this->money += fsToReturn->getPrice()/2;
-		return fsToReturn;		
-	}		
-	
+
+	IceSpell* sellIs(int i)			{ 	return dynamic_cast<IceSpell*> (sellSpell(i, ice));			}
+	LightingSpell* sellLs(int i)	{	return dynamic_cast<LightingSpell*> (sellSpell(i, fire));	}
+	FireSpell* sellFs(int i)		{	return dynamic_cast<FireSpell*> (sellSpell(i, lighting));	}
+		
+
 	void update(){
 		for(int i = 0; i < 3; i++){
 			if(this->heroes[i] != NULL && !this->heroes[i]->isFaint()){
@@ -363,6 +250,7 @@ private:
 		}
 	}
 	
+
 	int averageLevel(){
 		int avgLvl = 0;
 		for(int i = 0; i < 3; i++){
@@ -373,9 +261,8 @@ private:
 		return avgLvl;
 	}
 	
-	int getMoney(){
-		return money;
-	}
+
+	int getMoney(){	return money; }
 	
 	// NEED NAME FIX 
 	void battleLost(){
@@ -383,18 +270,17 @@ private:
 	}
 	
 	void battleWon(int numOfMonsters){	
-			if(this->averageLevel() < 1)
+			if(this->averageLevel() < 1){}
 				this->money += 0.1*this->money*numOfMonsters;
 			if(this->averageLevel() < 3)
 				this->money += 0.2*this->money*numOfMonsters;	
 			else
 				this->money += 0.3*this->money*numOfMonsters;
-			for(int i = 0; i < number_of_heroes; i++)
+			for(int i = 0; i < numOfMonsters; i++)
 				this->heroes[i]->getExperience(numOfMonsters);
 	}
 
 
-	
 	void change_armor(){
 		// input
 		bool want_to_change = false;    
@@ -439,7 +325,6 @@ private:
 			cin >> want_to_change;
         }
 	}
-	
 
 
 	void change_weapon(){
@@ -497,7 +382,7 @@ private:
 		if(option > 0 && option <= this->potions.size() && this->heroes[hero_index - 1]->use_potion(this->potions[option - 1]) )
 			potions.erase(potions.begin() + option - 1);
 	}
-	
+
     friend class Battle;
 };
 
@@ -514,6 +399,7 @@ private:
     	this->monsters[num]->getAttacked(attack);
 	}
 	
+
 	void getInfected(int index,Spell* sp){
 		// check type
 		if (dynamic_cast<FireSpell*>(sp)){
@@ -524,6 +410,7 @@ private:
 			this->monsters[index]->getInfected((LightingSpell *)sp);
 		}
 	}
+	
 	
 	void update(){
 		for(int i = 0; i < 6; i++){
@@ -557,8 +444,6 @@ public:
 	}
     friend class Battle;
 };
-
-
 
 
 
@@ -611,22 +496,28 @@ private:
 					cout << "What spell would you like to use?(1)Ice Spell (2) Fire Spell (3) Lighting Spell" << endl;
 				}
 				Spell* sp;
-				if(spellType == 1)
+				if(spellType == 1){
 					sp = this->heroes->useIceSpells();
-				else if(spellType == 2)
-					sp = this->heroes->useFireSpells();	
-				else
+				}else if(spellType == 2){
+					sp = this->heroes->useFireSpells();
+				}else{
 					sp = this->heroes->useLightSpells();
+				}
 				if(sp != NULL){
-					cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << ")" << endl;
-					int monster_index;
-					cin >> monster_index;
-					this->monsters->getAttacked(monster_index - 1, heroes->attack(i,sp));
-					this->monsters->getInfected(monster_index - 1, sp);
-				}	
+						cout << "Select a monster a monster for your attack:(Number from 1 to " << this->monsters->get_monsters_num() << ")" << endl;
+						int monster_index;
+						cin >> monster_index;
+						this->monsters->getAttacked(monster_index - 1, heroes->attack(i,sp));
+						this->monsters->getInfected(monster_index - 1, sp);
+				}
 			}
 			else if(action == 3 && heroes->potions.size() != 0){
-				this->heroes->usePotion(i);
+				this->heroes->printPotions();
+				cout << "Select one of the above potions range 1 to " << this->heroes->potions.size() << " or type 0 to cancel." << endl;
+				int option;
+				cin >> option;
+				if(option > 0 && option <= this->heroes->potions.size() && this->heroes->heroes[i]->use_potion(this->heroes->potions[option - 1]) )
+					heroes->potions.erase(heroes->potions.begin() + option - 1);
 			}
 		}
 	}
@@ -668,23 +559,16 @@ public:
 
             // pc's turn
             for (int i = 0; i < monsters->get_monsters_num(); i++){
-                if (!monsters->monsters[i]->isFaint()){
+                if (monsters->monsters[i]->getcurrentHealth() != 0){
                     this->heroes->getAttacked(monsters->monsters[i]->attack());
                 }
             }
 			this->heroes->update();
 			this->monsters->update();
         }
-        for(int i = 0; i < heroes->get_heroes_num(); i++){
-			if(heroes->heroes[i] != NULL)
-				heroes->heroes[i]->revive();
-		}
+        for(int i = 0; i < heroes->get_heroes_num(); i++)
+        	heroes->heroes[i]->revive();
         // end of battle
-		bool win = monsters_are_dead();
-		if(win)
-			cout << "Battle Won!" << endl;
-		else 
-			cout << "Battle Lost!" << endl;
         return monsters_are_dead(); 
     }
     
