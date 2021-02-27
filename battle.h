@@ -25,15 +25,6 @@ private:
     vector<Item*> items[3];
     vector<Spell*> spells[3];
 
-	// vector<Armor*> armors;
-	// vector<Weapon*> weapons;
-    // vector<Potion*> potions;
-    // SPELLS
-	// vector<IceSpell*> iceSpells;
-	// vector<FireSpell*> fireSpells;
-	// vector<LightingSpell*> lightSpells;
-	
-
 	// added now
 	Spell* useSpells(int type){
 		if(this->spells[type].size() == 0){
@@ -63,23 +54,23 @@ private:
 	// inventory functions
 	
 	void change_armor(int hero_index, int option){
-		if(armors.size() < option)	return;
-		armors[option - 1] = (Armor*) heroes[hero_index - 1]->equip(armors[option - 1]);
-		if(armors[option - 1] == NULL){
-			armors.erase(armors.begin() + option - 1);
+		if(items[armor].size() < option)	return;
+		items[armor][option - 1] = (Armor*) heroes[hero_index - 1]->equip((Armor*)(items[armor][option - 1]));
+		if(items[armor][option - 1] == NULL){
+			items[armor].erase(items[armor].begin() + option - 1);
 		}
 	}
 	
 	void change_weapon(int hero_index, int option){
-		if(weapons.size() < option)	return;
-		Weapon* w1 = weapons.at(option - 1);
+		if(items[weapon].size() < option)	return;
+		Weapon* w1 = (Weapon*)(items[weapon].at(option - 1));
 		w1->print();
 		Weapon** weaps = (Weapon**) heroes[hero_index]->equip(w1);
-		weapons[option - 1] = weaps[0];
-		if(weapons[option - 1] == NULL)
-			weapons.erase(weapons.begin() + option - 1); 
+		items[weapon][option - 1] = weaps[0];
+		if(items[weapon][option - 1] == NULL)
+			items[weapon].erase(items[weapon].begin() + option - 1);
 		if(weaps[1] != NULL)
-			weapons.push_back(weaps[1]);
+			items[weapon].push_back(weaps[1]);
 		delete[] weaps;	
 	}
 	
@@ -112,7 +103,7 @@ private:
 		heroes[1] = hero2;
 		heroes[2] = hero3;
 	}
-
+	/*
 	~heroe_squad(){
 		for(int i = 0; i < this->number_of_heroes; i++)
 			delete this->heroes[i];
@@ -129,7 +120,7 @@ private:
 		for(int i = 0; i < this->lightSpells.size(); i++)
 			delete lightSpells[i];						
 	}	    
-
+	*/
 
 	int get_heroes_num() const{	return number_of_heroes; }
 
@@ -298,9 +289,9 @@ private:
 				cin >> hero_index;
 				Armor* arm = this->heroes[hero_index - 1]->takeOutArmor();
 				if(arm != NULL)
-					this->armors.push_back(arm);
+					this->items[armor].push_back(arm);
 			}
-			if (armors.size() == 0){
+			if (items[armor].size() == 0){
 				std::cout << "You have no armor in your inventory" << std::endl;
 				return;
 			}
@@ -311,8 +302,8 @@ private:
             std::cout << "Select the armor you want to equip: " << endl;
             std::cout << "ARMOR LIST:\n--------------------"<<std::endl;
 			// print armor list
-			for(int i = 0; i < this->armors.size(); i++){
-              	Armor* arm = this->armors.at(i);
+			for(int i = 0; i < this->items[armor].size(); i++){
+              	Armor* arm = (Armor*)(this->items[armor].at(i));
                	cout << i + 1 << ")";
 				arm->print();
 			}
@@ -343,12 +334,12 @@ private:
 				cin >> hero_index;
 				Weapon** wps = this->heroes[hero_index - 1]->takeOutWeapons();
 				if(wps[0] != NULL)
-					this->weapons.push_back(wps[0]);
+					this->items[weapon].push_back(wps[0]);
 				if(wps[1] != NULL)
-					this->weapons.push_back(wps[1]);
+					this->items[weapon].push_back(wps[1]);
 				delete[] wps;	
 			}
-			if (weapons.size() == 0){
+			if (items[weapon].size() == 0){
 				std::cout << "You have no weapon in your inventory" << std::endl;
 				return;
 			}
@@ -359,8 +350,8 @@ private:
             std::cout << "Select the weapon you want to equip: " << endl;
 			// print weapons
 			std::cout << "WEAPONS LIST:\n--------------------"<<std::endl;
-            for(int i = 0; i < this->weapons.size(); i++){
-               	Weapon* wep = this->weapons.at(i);
+            for(int i = 0; i < this->items[weapon].size(); i++){
+               	Weapon* wep = (Weapon*)(this->items[weapon].at(i));
                	cout << i + 1 << ")";
 				wep->print();
 			}
@@ -373,16 +364,16 @@ private:
             cin >> want_to_change;
         }
 	}
-	
+
 	void usePotion(int hero_index){
 		this->printPotions();
-		cout << "Select one of the above potions range 1 to " << this->potions.size() << " or type 0 to cancel." << endl;
+		cout << "Select one of the above potions range 1 to " << this->items[2].size() << " or type 0 to cancel." << endl;
 		int option;
 		cin >> option;
-		if(option > 0 && option <= this->potions.size() && this->heroes[hero_index - 1]->use_potion(this->potions[option - 1]) )
-			potions.erase(potions.begin() + option - 1);
+		if(option > 0 && option <= this->items[2].size() && this->heroes[hero_index - 1]->use_potion((Potion*) this->items[2].at(option - 1)) )
+			items[2].erase(items[2].begin() + option - 1);
 	}
-
+	
     friend class Battle;
 };
 
@@ -511,13 +502,14 @@ private:
 						this->monsters->getInfected(monster_index - 1, sp);
 				}
 			}
-			else if(action == 3 && heroes->potions.size() != 0){
+			else if(action == 3 && heroes->items[potion].size() != 0){
 				this->heroes->printPotions();
-				cout << "Select one of the above potions range 1 to " << this->heroes->potions.size() << " or type 0 to cancel." << endl;
+				cout << "Select one of the above potions range 1 to " << this->heroes->items[potion].size() << " or type 0 to cancel." << endl;
 				int option;
 				cin >> option;
-				if(option > 0 && option <= this->heroes->potions.size() && this->heroes->heroes[i]->use_potion(this->heroes->potions[option - 1]) )
-					heroes->potions.erase(heroes->potions.begin() + option - 1);
+				if(	option > 0 && option <= this->heroes->items[potion].size() 
+					&& this->heroes->heroes[i]->use_potion((Potion*)(heroes->items[potion][option - 1])))
+					heroes->items[potion].erase(heroes->items[potion].begin() + option - 1);
 			}
 		}
 	}
