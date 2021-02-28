@@ -75,9 +75,6 @@ public:
 		return this->is_two_handed + 1;
 	}
 	
-	int itemClass(){
-		return 1;
-	}
 	~Weapon(){
 		cout << "Weapon destroyed!" << endl;
 	}
