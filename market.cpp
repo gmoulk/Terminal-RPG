@@ -288,8 +288,8 @@ void market::buy_spell(int type){
 	cout << "Choose the spell you want to buy range from 1 to " << spells[type].size() << " or 0 to cancel" << endl;
 	cin >> spellOption;
 	if(spellOption > 0 && spellOption <= spells[type].size()){
-		if(hs->buySpell(spells[type][spellOption - 1], type)){
-			spells[type].erase(spells[type].begin() + spellOption - 1);
+		if(this->hs->buySpell(spells[type][spellOption - 1], type)){
+		// 	spells[type].erase(spells[type].begin() + spellOption - 1);
 		}
 	}
 }
@@ -408,19 +408,12 @@ void market::interact(){
 	}
 }
 
-/*
+
 market::~market(){
-	for(int i = 0; i < armors.size(); i++)
-		delete armors[i];
-	for(int i = 0; i < weapons.size(); i++)
-		delete weapons[i];
-	for(int i = 0; i < iceSpells.size(); i++)
-		delete iceSpells[i];
-	for(int i = 0; i < fireSpells.size(); i++)
-		delete fireSpells[i];
-	for(int i = 0; i < lightSpells.size(); i++)
-		delete lightSpells[i];
-	for(int i = 0; i < potions.size(); i++)
-		delete potions[i];									
+	for(int i = 0; i < 3; i++)
+        for(int j = 0; j < items[i].size(); j++)
+            delete items[i][j];
+    for(int i = 0; i < 3; i++)
+        for(int j = 0; j < spells[i].size(); j++)
+            delete spells[i][j];									
 }
-*/

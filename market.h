@@ -12,16 +12,7 @@ class market{
 	private:
 		vector<Item*> items[3];
 	    vector<Spell*> spells[3];
-
-/*
-		vector<Armor*> armors;
-		vector<Weapon*> weapons;
-		vector<Potion*> potions;
-
-		vector<IceSpell*> iceSpells;
-		vector<FireSpell*> fireSpells;
-		vector<LightingSpell*> lightSpells;
-*/		
+				
 		heroe_squad* hs;
 		void buy_spell();
 		void buy_spell(int type);
@@ -54,5 +45,5 @@ class market{
 		
 		void interact();	
 		
-//		~market();
+		~market();
 };

@@ -1,3 +1,4 @@
+#pragma once
 #include "battle.h"
 #include "market.h"
 #include "square.h"
