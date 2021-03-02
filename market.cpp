@@ -289,7 +289,7 @@ void market::buy_spell(int type){
 	cin >> spellOption;
 	if(spellOption > 0 && spellOption <= spells[type].size()){
 		if(this->hs->buySpell(spells[type][spellOption - 1], type)){
-		// 	spells[type].erase(spells[type].begin() + spellOption - 1);
+		 	spells[type].erase(spells[type].begin() + spellOption - 1);
 		}
 	}
 }
