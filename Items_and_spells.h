@@ -6,12 +6,6 @@
 using namespace std;
 
 
-// BASE CLASSES ARE NOT ABSTRACT YET
-// INFORMATION IS NEED TO IMPLEMENT SOME FUNCION THAT ARE MISSING OR ARE NOT IMPLEMENTED YET
-
-
-
-// Item is not pure virtual yet
 class Item{
 
 protected:
@@ -37,7 +31,6 @@ public:
 	virtual ~Item(){
 		cout << "Item destroyed!" << endl;
 	}
-    // maybe virtual destructor
 };
 
 /*  weapon  double handed or not, standard damage
@@ -75,9 +68,6 @@ public:
 		return this->is_two_handed + 1;
 	}
 	
-	int itemClass(){
-		return 1;
-	}
 	~Weapon(){
 		cout << "Weapon destroyed!" << endl;
 	}
@@ -206,6 +196,7 @@ public:
 		return this->level_needed_to_use;
 	}
 	virtual ~Spell(){
+		cout << "Spell destroyed!" << endl;
 	}
 };
 
@@ -308,8 +299,5 @@ public:
 
 	~Effect(){
 		cout << "Effect destroyed!" << endl;
-	}
-    void debug(){
-    	cout << "{DEBUG} initial value: " << this->initial_value << " value to reduce " << this->value_to_reduce << endl;
 	}
 };
