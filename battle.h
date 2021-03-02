@@ -6,8 +6,6 @@
 #include <vector>
 
 using namespace std;
-// Maybe some implmentations will change
-// for the easiest implementaiton of battle
 
 enum{ ice,   fire,   lighting};
 enum{ armor, weapon, potion  };
@@ -25,7 +23,6 @@ private:
     vector<Item*> items[3];
     vector<Spell*> spells[3];
 
-	// added now
 	Spell* useSpells(int type);
 
 
@@ -153,7 +150,6 @@ private:
 
 	int getMoney(){	return money; }
 	
-	// NEED NAME FIX 
 	void battleLost(){
 		this->money = this->money / 2;
 	}
@@ -223,7 +219,6 @@ public:
 
 
 class Battle{
-// battle takes place on a square on the grid(grid not made yet)
 private:
     heroe_squad* heroes;
     monsters_squad* monsters;
