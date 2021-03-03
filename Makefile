@@ -3,6 +3,3 @@ make compile:
 
 make run:
 	./Terminal-RPG
-
-make mem_check:
-	valgrind ./Terminal-RPG		

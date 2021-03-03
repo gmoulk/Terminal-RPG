@@ -5,9 +5,6 @@
 using namespace std;
 
 
-// enum{ ice,   fire,   lighting};
-// enum{ armor, weapon, potion  };
-
 class market{
 	private:
 		vector<Item*> items[3];

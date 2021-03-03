@@ -111,6 +111,7 @@ private:
 			this->spells[type].push_back(sp);
 			return 1;
 		}
+		return 0;
     }
 	
 	bool buy(IceSpell* sp)		{	return buySpell(sp, ice);		 }
@@ -151,6 +152,7 @@ private:
 	int getMoney(){	return money; }
 	
 	void battleLost(){
+		cout << "Battle lost!" << endl;
 		this->money = this->money / 2;
 	}
 	

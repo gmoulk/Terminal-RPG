@@ -103,7 +103,8 @@ int heroe_squad::averageLevel(){
     return avgLvl;
 }
 
-void heroe_squad::battleWon(int numOfMonsters){	
+void heroe_squad::battleWon(int numOfMonsters){
+    cout << "Battle Won!" << endl;	
     if(this->averageLevel() < 1){}
         this->money += 0.1*this->money*numOfMonsters;
     if(this->averageLevel() < 3)
@@ -207,6 +208,10 @@ void heroe_squad::change_weapon(){
 
 
 void heroe_squad::usePotion(int hero_index){
+    if(this->items[potion].size() == 0){
+        cout << "No potions in inventory!" << endl;
+        return;
+    }
     this->printPotions();
     cout << "Select one of the above potions range 1 to " << this->items[2].size() << " or type 0 to cancel." << endl;
     int option;

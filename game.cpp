@@ -153,9 +153,9 @@ game::game(){
 		moved = false;
 		if(access[x][y] == 0 && this->cs == NULL){
 			this->cs = new commonSquare(this->hs, rand()%2);
-			if(this->cs->isBattleOpen())
+			if(this->cs->isBattleOpen()){
 				this->cs->interact();
-			cout << "Out of battle!" << endl;	
+			}	
 		}
 		if(access[x][y] == 1 && this->mrk == NULL)
 			this->mrk = new marketSquare(this->hs);
@@ -186,14 +186,18 @@ game::game(){
 		}else if(option == 9){
 			cout << "Which hero do you want to use the potion" << endl;
 			int hero_index = -1;
-			if(hero_index <= 0 && hero_index > this->hs->get_heroes_num())
+			while(hero_index <= 0 || hero_index > this->hs->get_heroes_num())
 				cin >> hero_index;
 			hs->usePotion(hero_index);	
 		}else{
-			if(this->mrk != NULL)
+			if(this->mrk != NULL){
 				delete this->mrk;
-			if(this->cs != NULL)
-				delete this->cs;	
+				this->mrk = NULL;
+			}
+			if(this->cs != NULL){
+				delete this->cs;
+				this->cs = NULL;
+			}	
 			quit = true;
 		}
 			

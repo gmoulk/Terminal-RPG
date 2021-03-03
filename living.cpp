@@ -296,7 +296,6 @@ void Monster::update(){
 	if(this->effect != NULL){
 		if(this->effect->update()){
 			cout << "Effect on!" << endl;
-			this->effect->debug();
 			return;	
 		}
 		else{

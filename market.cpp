@@ -142,10 +142,8 @@ market::market(heroe_squad* hs){
     		char* token1 = strtok(str,":");				
 			do{   	
 				if(j % 2==0){
-					if(j == 2){
+					if(j == 2)
 						class_ = string(token1);
-						cout << "DEBUG " << class_ << endl;
-					}
 					else if(j == 4)
 						name = string(token1);
 					else if(j == 6)

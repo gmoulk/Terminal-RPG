@@ -6,7 +6,7 @@ attackMin:3
 deffence:1
 probOfDogde:0.02
 
-Class: Dragon
+Class:Dragon
 Name: Pelor
 HP: 70
 attackMax: 8
@@ -14,7 +14,7 @@ attackMin: 3
 deffence: 2
 probOfDogde: 0.03
 
-Class: Dragon
+Class:Dragon
 Name: Arvoreen
 HP: 64
 attackMax: 7
@@ -22,7 +22,7 @@ attackMin: 3
 deffence: 2
 probOfDogde: 0.04
 
-Class: Dragon
+Class:Dragon
 Name: Urdlen
 HP: 65
 attackMax: 8
@@ -30,7 +30,7 @@ attackMin: 4
 deffence: 3
 probOfDogde: 0.02
 
-Class: Spirit
+Class:Spirit
 Name: Charmalaine
 HP: 60
 attackMax: 3
@@ -38,7 +38,7 @@ attackMin: 1
 deffence: 1
 probOfDogde: 0.09
 
-Class: Spirit
+Class:Spirit
 Name: Diirinka
 HP: 64
 attackMax: 3
@@ -46,7 +46,7 @@ attackMin: 2
 deffence: 1
 probOfDogde: 0.10
 
-Class: Spirit
+Class:Spirit
 Name: Luthic
 HP: 68
 attackMax: 4
@@ -54,7 +54,7 @@ attackMin: 1
 deffence: 2
 probOfDogde: 0.11
 
-Class: Spirit
+Class:Spirit
 Name: Hiatea
 HP: 59
 attackMax: 3
@@ -62,7 +62,7 @@ attackMin: 2
 deffence: 1
 probOfDogde: 0.12
 
-Class: Exosceleton
+Class:Exosceleton
 Name: Sixin
 HP: 70
 attackMax: 4
@@ -70,7 +70,7 @@ attackMin: 2
 deffence: 5
 probOfDogde: 0.04
 
-Class: Exosceleton
+Class:Exosceleton
 Name: Sixin
 HP: 69
 attackMax: 4
@@ -78,7 +78,7 @@ attackMin: 1
 deffence: 6
 probOfDogde: 0.05
 
-Class: Exosceleton
+Class:Exosceleton
 Name: Brandobaris
 HP: 71
 attackMax: 3
@@ -86,7 +86,7 @@ attackMin: 1
 deffence: 6
 probOfDogde: 0.03
 
-Class: Exosceleton
+Class:Exosceleton
 Name: Jubilex
 HP: 65
 attackMax: 5
